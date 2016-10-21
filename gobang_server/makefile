@@ -1,5 +1,2 @@
-CC=g++
-CFLAGS=-I.
-
-server : main.o
-	&(CC) -o server main.cpp CFLAGS
+server: main.cpp
+	g++ -o server main.cpp -I.
