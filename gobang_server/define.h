@@ -36,7 +36,21 @@
 #endif // _WIN32
 
 
+#define MAX_PACKET 0xFF
+#define MAX_SOCKETS 0x10
 
+#define WOOD_WAIT_TIME 5000
+
+#define FLAG_QUIT 0x0000
+#define FLAG_WOOD_UPDATE 0x0010
+
+typedef struct
+{
+	int in_use;
+	int questing;
+	uint8_t amt_wood;
+	uint32_t timer_wood;
+}Client;
 
 
 #endif // !__DEFINE__H__
