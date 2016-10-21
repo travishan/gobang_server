@@ -1,4 +1,4 @@
-cc=g++
+cc=g++ -std=c++11
 exe=server
 obj=main.o
 $(exe) : $(obj)
