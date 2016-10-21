@@ -20,7 +20,8 @@ int main() {
 	socklen_t sa_size = sizeof(struct sockaddr_in);
 	socketaddress.sin_family = AF_INET;
 	socketaddress.sin_port = htons(6000);
-	socketaddress.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+//	socketaddress.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+	socketaddress.sin_addr.s_addr = htonl(INADDR_ANY);
 	memset(&(socketaddress.sin_zero), 0, 8);
 
 	//bind
