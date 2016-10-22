@@ -7,6 +7,8 @@
 	#include <WS2tcpip.h>
 	//#pragma comment(lib,"ws2_32.lib")
 	#pragma comment(lib,"WS2_32.lib") 
+	#include <SDL.h>
+	#include <SDL_net.h>
 #else
 	#include <sys/types.h>
 	#include <sys/socket.h>
@@ -14,7 +16,8 @@
 	#include <unistd.h>
 	#include <netdb.h>
 	#include <arpa/inet.h>
-	
+	#include "SDL/SDL.h"
+	#include "SDL/SDL_net.h"
 #endif // WIN32
 
 

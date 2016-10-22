@@ -2,8 +2,8 @@
 #define __SERVER__SOCKET__H__
 
 
-#include <SDL.h>
-#include <SDL_net.h>
+#include "define.h"
+
 #include <iostream>
 
 using namespace std;
