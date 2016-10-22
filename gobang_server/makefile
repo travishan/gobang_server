@@ -1,8 +1,8 @@
 cc=g++ -std=c++11
 exe=server
 obj=main.o ServerSocket.o
-SDL_CFLAGS := $(shell sdl-config --cflags)
-SDL_LDFLAGS := $(shell sdl-config --libs)
+SDL_CFLAGS := $(shell sdl2-config --cflags)
+SDL_LDFLAGS := $(shell sdl2-config --libs)
 
 $(exe) : $(obj)
 	$(cc) -o $(exe) $(obj) $(SDL_LDFLAGS)
