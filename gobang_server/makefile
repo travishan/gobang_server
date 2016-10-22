@@ -1,7 +1,7 @@
 cc=g++ -std=c++11
 exe=server
 obj=main.o ServerSocket.o
-CFLAGS=-I.
+CFLAGS=-ISDL2
 $(exe) : $(obj)
 	$(cc) -o $(exe) $(obj) $(CFLAGS)
 
