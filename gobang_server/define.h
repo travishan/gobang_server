@@ -16,8 +16,8 @@
 	#include <unistd.h>
 	#include <netdb.h>
 	#include <arpa/inet.h>
-	#include "SDL2/SDL.h"
-	#include "SDL2/SDL_net.h"
+	#include <SDL2/SDL.h>
+	#include <SDL2/SDL_net.h>
 #endif // WIN32
 
 
