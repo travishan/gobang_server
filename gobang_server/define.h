@@ -44,13 +44,18 @@
 #define FLAG_QUIT 0x0000
 #define FLAG_WOOD_UPDATE 0x0010
 
-typedef struct
-{
-	int in_use;
-	int questing;
-	uint8_t amt_wood;
-	uint32_t timer_wood;
-}Client;
+
+//-----------------------------------------------------------------------------
+#define FLAG_QUIT 0x0000
+#define FLAG_WOOD_QUEST 0x0011
+#define FLAG_WOOD_UPDATE 0x0010
+#define FLAG_WOOD_GETTIME 0x0012
+
+
+
+
+
+
 
 
 #endif // !__DEFINE__H__
