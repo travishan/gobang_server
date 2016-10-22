@@ -8,7 +8,7 @@ main.o : main.cpp
 	$(cc) -c main.cpp
 
 ServerSocket.o : ServerSocket.cpp
-	$(cc) -c ServerSocket,cpp
+	$(cc) -c ServerSocket.cpp
 
 
 clean :
