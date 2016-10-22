@@ -26,7 +26,12 @@ typedef struct
 class ServerSocket
 {
 public:
-	ServerSocket() : running(1), next_ind(0) {}
+	ServerSocket() : running(1), next_ind(0), server_socket(nullptr), socket_set(nullptr) {
+		for (int i = 0; i < MAX_SOCKETS; ++i) {
+			clients[i] = Client();
+			sockets[i] = nullptr;
+		}
+	}
 
 
 	void run();
