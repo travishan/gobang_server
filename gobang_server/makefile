@@ -7,10 +7,10 @@ $(exe) : $(obj)
 	$(cc) -o $(exe) $(obj) $(CFLAGS)
 
 main.o : main.cpp
-	$(cc) -c main.cpp $(CFLAGS)
+	$(cc) -c main.cpp
 
 ServerSocket.o : ServerSocket.cpp
-	$(cc) -c ServerSocket.cpp $(CFLAGS)
+	$(cc) -c ServerSocket.cpp
 
 clean :
 	rm -rf *.o
