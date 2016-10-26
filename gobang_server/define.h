@@ -13,7 +13,8 @@
 #endif // __WIN32
 
 #include <vector>
-
+#include <map>
+#include <memory>
 
 using namespace std;
 

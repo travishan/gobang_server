@@ -23,8 +23,8 @@ public:
 	~Room();
 
 	// 初始化玩家1,2
-	void initP1(string name, TCPsocket socket);
-	void initP2(string name, TCPsocket socket);
+	void initP1(const shared_ptr<Player> &player);
+	void initP2(const shared_ptr<Player> &player);
 	//初始化房间
 	void initRoom();
 
@@ -41,7 +41,7 @@ private:
 
 private:
 	//玩家对象
-	Player *p1, *p2;
+	shared_ptr<Player> p1, p2;
 	//棋盘
 	CHESS_COLOR chessBoard[GRID_NUM][GRID_NUM];
 	//当前下子方

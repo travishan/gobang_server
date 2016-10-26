@@ -10,15 +10,13 @@ Player类
 下过的棋子
 名字
 
-
-
 ************************/
 class Player
 {
 	typedef vector<B_POINT>::iterator recordIterator;
 	typedef vector<B_POINT>::size_type size_t;
 public:
-	Player(const string &name, TCPsocket socket);
+	Player(const string &name);
 	~Player();
 	//记录一步棋
 	void addStep(const B_POINT &p);
@@ -31,8 +29,8 @@ public:
 	//get set 相关函数
 	void setName(string n) { name = n; }
 	string getName() {return name;}
-	void setSocket(TCPsocket s) { socket = s; }
-	TCPsocket getSocket() {return socket;}
+	//void setSocket(TCPsocket s) { socket = s; }
+	//TCPsocket getSocket() {return socket;}
 	void setConnected(bool con) {connected = con;}
 	bool getConnected() {return connected;}
 	void setRegret(bool reg) {regret= reg;}
@@ -43,8 +41,8 @@ public:
 private:
 	//玩家id
 	string name;
-	//玩家的socket
-	TCPsocket socket;
+	////玩家的socket
+	//TCPsocket socket;
 	//玩家走过的棋子记录
 	vector<B_POINT> record;
 	//是否连接

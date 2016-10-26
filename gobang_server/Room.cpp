@@ -5,15 +5,13 @@ Room::Room() :p1(nullptr), p2(nullptr), currentPlayer(N), lastTime(0) {
 }
 
 Room::~Room() {
-	delete p1; p1 = nullptr;
-	delete p2; p2 = nullptr;
 }
 
-void Room::initP1(string name, TCPsocket socket) {
-	p1 = new Player(name, socket);
+void Room::initP1(const shared_ptr<Player> &player) {
+	p1 = player;
 }
-void Room::initP2(string name, TCPsocket socket) {
-	p2 = new Player(name, socket);
+void Room::initP2(const shared_ptr<Player> &player) {
+	p2 = player;
 }
 
 void Room::initBoard() {

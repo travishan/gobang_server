@@ -125,6 +125,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="House.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Referee.h" />
     <ClInclude Include="Room.h" />
@@ -132,6 +133,7 @@
     <ClInclude Include="define.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="House.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Referee.cpp" />
     <ClCompile Include="Room.cpp" />

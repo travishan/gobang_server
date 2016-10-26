@@ -30,6 +30,9 @@
     <ClInclude Include="Referee.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="House.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -45,6 +48,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Referee.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="House.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
