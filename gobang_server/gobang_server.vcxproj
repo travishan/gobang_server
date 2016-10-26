@@ -126,12 +126,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Referee.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="ServerSocket.h" />
     <ClInclude Include="define.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Referee.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="ServerSocket.cpp" />
     <ClCompile Include="main.cpp" />

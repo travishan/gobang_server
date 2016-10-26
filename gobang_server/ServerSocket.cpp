@@ -1,6 +1,11 @@
 #include "ServerSocket.h"
 
-
+ServerSocket::ServerSocket() : running(1), next_ind(0), server_socket(nullptr), socket_set(nullptr) {
+	for (int i = 0; i < MAX_SOCKETS; ++i) {
+		clients[i] = Client();
+		sockets[i] = nullptr;
+	}
+}
 
 void ServerSocket::init() {
 	if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_EVENTS) != 0) {
@@ -136,8 +141,6 @@ void ServerSocket::run() {
 					continue;
 				}
 
-				/*char *message = new char[length+1];
-				memcpy(message,)*/
 				char *message = (char*)data;
 				cout << "number " << ind << " send a message:  " << message << endl;
 
