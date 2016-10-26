@@ -1,7 +1,10 @@
 #include "Player.h"
 
+Player::Player() :Player("") {
 
-Player::Player(const string &name, TCPsocket socket) :name(name), socket(socket), connected(false), regret(false) {
+}
+
+Player::Player(const string &name) :name(name), connected(false), regret(false) {
 	record.reserve(150);
 }
 

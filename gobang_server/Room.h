@@ -32,6 +32,10 @@ public:
 	//执行游戏逻辑
 	void runFrame();
 
+
+	//get set
+	void addPlayer() { ++playerNum; }
+	int getPlayerNum() { return playerNum; }
 private:
 	//初始化棋盘
 	void initBoard();
@@ -48,6 +52,8 @@ private:
 	CHESS_COLOR currentPlayer;
 	//时间计时
 	int lastTime;
+	//当前人数
+	int playerNum;
 };
 
 

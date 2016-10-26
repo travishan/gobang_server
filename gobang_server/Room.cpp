@@ -1,6 +1,6 @@
 #include "Room.h"
 
-Room::Room() :p1(nullptr), p2(nullptr), currentPlayer(N), lastTime(0) {
+Room::Room() :p1(nullptr), p2(nullptr), currentPlayer(N), lastTime(0), playerNum(0){
 
 }
 

@@ -16,6 +16,7 @@ class Player
 	typedef vector<B_POINT>::iterator recordIterator;
 	typedef vector<B_POINT>::size_type size_t;
 public:
+	Player();
 	Player(const string &name);
 	~Player();
 	//¼ÇÂ¼Ò»²½Æå
