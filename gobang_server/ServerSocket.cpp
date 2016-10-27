@@ -102,9 +102,11 @@ uint8_t* ServerSocket::recvData(int index, uint16_t &length) {
 		break;
 		case FLAG_PLAY:
 		{
-			numRecv = SDLNet_TCP_Recv(sockets[index], tempData, MAX_PACKET);
+			numRecv = SDLNet_TCP_Recv(sockets[index], tempData, sizeof(B_POINT));
 
 			B_POINT p = *((B_POINT*)tempData);
+
+			cout << "ºá×ø±ê:" << p.row << "Êú×ø±ê£º" << p.col << endl;
 		}
 		break;
 		case FLAG_QUIT:
@@ -120,11 +122,9 @@ uint8_t* ServerSocket::recvData(int index, uint16_t &length) {
 		}
 		
 
-		
-
-		uint8_t* data = (uint8_t*)malloc(numRecv * sizeof(uint8_t));
-		memcpy(data, tempData, numRecv);
-		return data;
+		/*uint8_t* data = (uint8_t*)malloc(numRecv * sizeof(uint8_t));
+		memcpy(data, tempData, numRecv);*/
+		return nullptr;
 	}
 
 
