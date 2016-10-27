@@ -80,8 +80,9 @@ int ServerSocket::acceptSocket(int index) {
 uint8_t* ServerSocket::recvData(int index, uint16_t &length) {
 	uint8_t tempData[MAX_PACKET];
 
-	int numRecv = SDLNet_TCP_Recv(sockets[index], tempData, MAX_PACKET);
-	
+	uint16_t flag;
+	int numRecv = SDLNet_TCP_Recv(sockets[index], &flag, sizeof(uint16_t));
+
 	if (numRecv <= 0) {
 		closeSocket(index);
 
@@ -93,7 +94,33 @@ uint8_t* ServerSocket::recvData(int index, uint16_t &length) {
 		}
 		return nullptr;
 	} else {
-		length = numRecv;
+		switch (flag) {
+		case FLAG_CONN:
+		{
+			
+		}
+		break;
+		case FLAG_PLAY:
+		{
+			numRecv = SDLNet_TCP_Recv(sockets[index], tempData, MAX_PACKET);
+
+			B_POINT p = *((B_POINT*)tempData);
+		}
+		break;
+		case FLAG_QUIT:
+		{
+
+		}
+		break;
+		case FLAG_REGRET:
+		{
+
+		}
+		break;
+		}
+		
+
+		
 
 		uint8_t* data = (uint8_t*)malloc(numRecv * sizeof(uint8_t));
 		memcpy(data, tempData, numRecv);

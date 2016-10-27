@@ -37,7 +37,7 @@ using namespace std;
 
 
 
-typedef struct B_POINT
+typedef struct
 {
 	int row;
 	int col;

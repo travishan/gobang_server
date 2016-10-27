@@ -6,7 +6,8 @@
 #include "Room.h"
 
 
-#define ROOM_NUM 10
+#define ROOM_NUM 50
+#define PLAYER_NUM 100
 
 class House
 {
@@ -24,8 +25,10 @@ public:
 	void addInRoom(int playerIndex);
 
 private:
-	//创建房间
-	void initRoom();
+	//初始化room vector
+	void initRooms();
+	//初始化玩家vector
+	void initPlayers();
 private:
 	//玩家数组
 	vector<shared_ptr<Player>> players;

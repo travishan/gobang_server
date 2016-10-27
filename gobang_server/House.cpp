@@ -3,7 +3,7 @@
 
 
 House::House() :roomIndex(0), playerIndex(0) {
-	initRoom();
+	initRooms();
 }
 
 House::~House() {}
@@ -39,10 +39,14 @@ void House::addInRoom(int playerIndex) {
 private
 
 ******************************/
-void House::initRoom() {
+void House::initRooms() {
 	rooms.reserve(ROOM_NUM);
-	for (int i = 0; i < rooms.size(); ++i) {
+	for (int i = 0; i < ROOM_NUM; ++i) {
 		shared_ptr<Room> r = make_shared<Room>(Room());
 		rooms.push_back(r);
 	}
+}
+
+void House::initPlayers() {
+	players.reserve(PLAYER_NUM);
 }
