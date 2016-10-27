@@ -15,6 +15,7 @@ class House
 	typedef int ROOM_INDEX;
 	typedef int SOCKET_INDEX;
 	typedef pair<int, int> mapPair;
+	typedef function<void(int, uint8_t*, uint16_t, uint16_t)> SEND_FUN;
 public:
 	House();
 	~House();
@@ -25,6 +26,10 @@ public:
 	void addInRoom(int playerIndex);
 	//处理消息
 	void handleRecieveData(int socketIndex, uint16_t flag, uint8_t* data, uint16_t length);
+	//发送消息到客户端
+	void sendData();
+	//设置可调用函数类型sendFun
+	void setSendFun(SEND_FUN sendFun);
 
 private:
 	//初始化room vector
@@ -44,6 +49,8 @@ private:
 	ROOM_INDEX roomIndex;
 	//下一个玩家索引
 	PLAYER_INDEX playerIndex;
+	//发送函数function
+	SEND_FUN sendFun;
 };
 
 

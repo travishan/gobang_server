@@ -45,6 +45,12 @@ void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uin
 		B_POINT p = *((B_POINT*)data);
 
 		cout << "横坐标:" << p.row << "竖坐标：" << p.col << endl;
+
+		delete data;
+		uint16_t flag = FLAG_TIME;
+		int time = 10;
+		uint16_t length = sizeof(int);
+		sendFun(socketIndex, (uint8_t*)&time, length, flag);
 	}
 	break;
 	case FLAG_QUIT:
@@ -59,6 +65,18 @@ void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uin
 	break;
 	}
 }
+
+//发送消息到客户端
+void House::sendData() {
+	
+}
+
+//设置可调用函数类型sendFun
+void House::setSendFun(SEND_FUN sendFun) {
+	this->sendFun = sendFun;
+}
+
+
 
 /******************************
 

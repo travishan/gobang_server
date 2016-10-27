@@ -53,6 +53,8 @@ private:
 	void closeSocket(int index);
 	//接收数据
 	void recvData(int index);
+	//发送数据
+	void sendData(int index, uint8_t* data, uint16_t length, uint16_t flag);
 	//关闭所有socket
 	void close();
 	//发生异常关闭socket

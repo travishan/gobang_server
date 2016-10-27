@@ -6,6 +6,9 @@ ServerSocket::ServerSocket() : running(1), next_ind(0), server_socket(nullptr), 
 		//clients[i] = Client();
 		sockets[i] = nullptr;
 	}
+
+	using namespace std::placeholders;
+	house->setSendFun(bind(&ServerSocket::sendData, this, _1, _2, _3, _4));
 }
 
 void ServerSocket::init() {
@@ -112,8 +115,27 @@ void ServerSocket::recvData(int index) {
 			}
 		}
 	}
+}
 
 
+void ServerSocket::sendData(int index, uint8_t* data, uint16_t length, uint16_t flag) {
+	uint8_t tempData[MAX_PACKET];
+
+	int offset = 0;
+	memcpy(tempData + offset, &flag, sizeof(uint16_t));
+	offset += sizeof(uint16_t);
+
+	memcpy(tempData + offset, &length, sizeof(uint16_t));
+	offset += sizeof(uint16_t);
+
+	memcpy(tempData + offset, data, length);
+	offset += length;
+
+	int num_sent = SDLNet_TCP_Send(sockets[index], tempData, offset);
+	if (num_sent < length) {
+		fprintf(stderr, "ER: SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+		closeSocket(index);
+	}
 }
 
 void ServerSocket::run() {
