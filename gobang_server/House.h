@@ -23,6 +23,8 @@ public:
 	void addPlayer(int socketIndex);
 	//加入房间
 	void addInRoom(int playerIndex);
+	//处理消息
+	void handleRecieveData(int socketIndex, uint16_t flag, uint8_t* data, uint16_t length);
 
 private:
 	//初始化room vector

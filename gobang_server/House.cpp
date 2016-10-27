@@ -33,6 +33,32 @@ void House::addInRoom(int playerIndex) {
 	roomIndex = (roomIndex + 1) % ROOM_NUM;
 }
 
+void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uint16_t length) {
+	switch (flag) {
+	case FLAG_CONN:
+	{
+		cout << "conn消息！" << endl;
+	}
+	break;
+	case FLAG_PLAY:
+	{
+		B_POINT p = *((B_POINT*)data);
+
+		cout << "横坐标:" << p.row << "竖坐标：" << p.col << endl;
+	}
+	break;
+	case FLAG_QUIT:
+	{
+
+	}
+	break;
+	case FLAG_REGRET:
+	{
+
+	}
+	break;
+	}
+}
 
 /******************************
 

@@ -77,54 +77,40 @@ int ServerSocket::acceptSocket(int index) {
 }
 
 
-uint8_t* ServerSocket::recvData(int index, uint16_t &length) {
-	uint8_t tempData[MAX_PACKET];
+void ServerSocket::errorClose(int index) {
+	closeSocket(index);
 
+	const char* err = SDLNet_GetError();
+	if (strlen(err) == 0) {
+		cout << "DB: client disconnected\n";
+	} else {
+		fprintf(stderr, "ER: SDLNet_TCP_Recv: %s\n", err);
+	}
+}
+
+void ServerSocket::recvData(int index) {
 	uint16_t flag;
 	int numRecv = SDLNet_TCP_Recv(sockets[index], &flag, sizeof(uint16_t));
 
-	if (numRecv <= 0) {
-		closeSocket(index);
-
-		const char* err = SDLNet_GetError();
-		if (strlen(err) == 0) {
-			cout << "DB: client disconnected\n";
-		} else {
-			fprintf(stderr, "ER: SDLNet_TCP_Recv: %s\n", err);
+	if (numRecv <= 0) {//若numRecv小于0  则发生异常 关闭socket
+		errorClose(index);
+		return;
+	} else {//否则，接收剩余消息的长度信息
+		uint16_t length;
+		numRecv = SDLNet_TCP_Recv(sockets[index], &length, sizeof(uint16_t));
+		if (numRecv <= 0) {//若numRecv小于0  则发生异常 关闭socket
+			errorClose(index);
+			return;
+		} else if(length > 0) {//若length大于0 ，则接收剩余信息
+			uint8_t *tempData = new uint8_t[length];
+			numRecv = SDLNet_TCP_Recv(sockets[index], tempData, length);
+			if (numRecv <= 0) {//若numRecv小于0  则发生异常 关闭socket
+				errorClose(index);
+				return;
+			} else {
+				house->handleRecieveData(index, flag, tempData, length);
+			}
 		}
-		return nullptr;
-	} else {
-		switch (flag) {
-		case FLAG_CONN:
-		{
-			
-		}
-		break;
-		case FLAG_PLAY:
-		{
-			numRecv = SDLNet_TCP_Recv(sockets[index], tempData, sizeof(B_POINT));
-
-			B_POINT p = *((B_POINT*)tempData);
-
-			cout << "横坐标:" << p.row << "竖坐标：" << p.col << endl;
-		}
-		break;
-		case FLAG_QUIT:
-		{
-
-		}
-		break;
-		case FLAG_REGRET:
-		{
-
-		}
-		break;
-		}
-		
-
-		/*uint8_t* data = (uint8_t*)malloc(numRecv * sizeof(uint8_t));
-		memcpy(data, tempData, numRecv);*/
-		return nullptr;
 	}
 
 
@@ -162,20 +148,7 @@ void ServerSocket::run() {
 			for (ind = 0; (ind < MAX_SOCKETS) && num_rdy; ++ind) {
 				if (sockets[ind] == nullptr) continue;
 				if (!SDLNet_SocketReady(sockets[ind])) continue;
-
-				uint8_t *data;
-				uint16_t length;
-
-				data = recvData(ind, length);
-				if (data == nullptr) {
-					num_rdy--;
-					continue;
-				}
-
-				char *message = (char*)data;
-				cout << "number " << ind << " send a message:  " << message << endl;
-
-				free(message);
+				recvData(ind);
 				--num_rdy;
 			}
 		}

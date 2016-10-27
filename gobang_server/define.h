@@ -32,6 +32,7 @@ using namespace std;
 //服务端向客户端发送的消息头  uint16_t格式
 #define FLAG_FULL 0x0013   //满员
 #define FLAG_UPDATE 0x0014  //更新游戏状态
+#define FLAG_TIME 0x0015 // 更新游戏时间
 
 
 

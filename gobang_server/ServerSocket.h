@@ -52,9 +52,11 @@ private:
 	//关闭索引为index的socket
 	void closeSocket(int index);
 	//接收数据
-	uint8_t* recvData(int index, uint16_t &length);
+	void recvData(int index);
 	//关闭所有socket
 	void close();
+	//发生异常关闭socket
+	void errorClose(int index);
 
 	//房间管理类
 	shared_ptr<House> house;
