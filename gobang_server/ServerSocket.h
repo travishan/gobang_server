@@ -39,7 +39,7 @@ private:
 	//保存服务器的socket变量
 	TCPsocket server_socket;
 	//客户端数组， clients和sockets一一对应
-	Client clients[MAX_SOCKETS];
+	//Client clients[MAX_SOCKETS];
 	SDLNet_SocketSet socket_set;
 	TCPsocket sockets[MAX_SOCKETS];
 

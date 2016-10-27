@@ -3,7 +3,7 @@
 ServerSocket::ServerSocket() : running(1), next_ind(0), server_socket(nullptr), socket_set(nullptr), house(make_shared<House>(House())){
 	
 	for (int i = 0; i < MAX_SOCKETS; ++i) {
-		clients[i] = Client();
+		//clients[i] = Client();
 		sockets[i] = nullptr;
 	}
 }
@@ -52,7 +52,7 @@ void ServerSocket::closeSocket(int index) {
 		exit(-1);
 	}
 
-	memset(&clients[index], 0x00, sizeof(Client));
+	//memset(&clients[index], 0x00, sizeof(Client));
 	SDLNet_TCP_Close(sockets[index]);
 	sockets[index] = nullptr;
 }
@@ -66,11 +66,13 @@ int ServerSocket::acceptSocket(int index) {
 	sockets[index] = SDLNet_TCP_Accept(server_socket);
 	if (sockets[index] == nullptr) return 0;
 
-	clients[index].in_use = 1;
+	//clients[index].in_use = 1;
 	if (SDLNet_TCP_AddSocket(socket_set, sockets[index]) == -1) {
 		fprintf(stderr, "ER: SDLNet_TCP_AddSocket: %s\n", SDLNet_GetError());
 		exit(-1);
 	}
+
+	house->addPlayer(index);
 	return 1;
 }
 
@@ -128,6 +130,7 @@ void ServerSocket::run() {
 				--num_rdy;
 			}
 
+			//有数据流入
 			int ind;
 			for (ind = 0; (ind < MAX_SOCKETS) && num_rdy; ++ind) {
 				if (sockets[ind] == nullptr) continue;

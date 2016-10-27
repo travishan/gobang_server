@@ -13,6 +13,10 @@ void House::addPlayer(int socketIndex) {
 	players.push_back(p);
 	playerSocketMap.insert(mapPair(playerIndex, socketIndex));
 
+	addInRoom(playerIndex);
+
+	++playerIndex;
+
 }
 
 void House::addInRoom(int playerIndex) {

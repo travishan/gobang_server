@@ -23,6 +23,19 @@ using namespace std;
 #define GRID_NUM 15
 #define GRID_COUNT 15*15
 
+//客户端向服务器发送的消息头   uint16_t格式
+#define FLAG_QUIT 0x0000   //退出消息
+#define FLAG_CONN 0x0010   //连接
+#define FLAG_PLAY 0x0011    //下棋
+#define FLAG_REGRET 0x0012 //悔棋
+
+//服务端向客户端发送的消息头  uint16_t格式
+#define FLAG_FULL 0x0013   //满员
+#define FLAG_UPDATE 0x0014  //更新游戏状态
+
+
+
+
 
 typedef struct B_POINT
 {
@@ -52,6 +65,9 @@ inline
 void fillMatrix(CHESS_COLOR(&a)[15][15], int n) {
 	memset(a, n, sizeof(a));
 }
+
+
+
 
 //
 //#ifdef _WIN32
