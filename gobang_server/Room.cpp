@@ -14,6 +14,18 @@ void Room::initP2(const shared_ptr<Player> &player) {
 	p2 = player;
 }
 
+bool Room::addPlayer(const shared_ptr<Player> &player) { 
+	if (playerNum == 0) {
+		initP1(player);
+	} else if (playerNum == 1) {
+		initP2(player);
+	} else {
+		return false;
+	}
+	++playerNum; 
+	return true;
+}
+
 void Room::initBoard() {
 	fillMatrix(chessBoard, N);
 }

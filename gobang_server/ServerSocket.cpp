@@ -1,6 +1,7 @@
 #include "ServerSocket.h"
 
-ServerSocket::ServerSocket() : running(1), next_ind(0), server_socket(nullptr), socket_set(nullptr) {
+ServerSocket::ServerSocket() : running(1), next_ind(0), server_socket(nullptr), socket_set(nullptr), house(make_shared<House>(House())){
+	
 	for (int i = 0; i < MAX_SOCKETS; ++i) {
 		clients[i] = Client();
 		sockets[i] = nullptr;

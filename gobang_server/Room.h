@@ -23,8 +23,7 @@ public:
 	~Room();
 
 	// 初始化玩家1,2
-	void initP1(const shared_ptr<Player> &player);
-	void initP2(const shared_ptr<Player> &player);
+	bool addPlayer(const shared_ptr<Player> &player);
 	//初始化房间
 	void initRoom();
 
@@ -34,14 +33,16 @@ public:
 
 
 	//get set
-	void addPlayer() { ++playerNum; }
+	
 	int getPlayerNum() { return playerNum; }
 private:
 	//初始化棋盘
 	void initBoard();
 	//初始化棋局相关属性
 	void initAttribute();
-	
+	//初始化玩家
+	void initP1(const shared_ptr<Player> &player);
+	void initP2(const shared_ptr<Player> &player);
 
 private:
 	//玩家对象

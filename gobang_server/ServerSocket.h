@@ -3,9 +3,8 @@
 
 
 #include "define.h"
-#include <iostream>
+#include "House.h"
 
-using namespace std;
 
 
 #define MAX_PACKET 1024
@@ -56,6 +55,9 @@ private:
 	uint8_t* recvData(int index, uint16_t &length);
 	//关闭所有socket
 	void close();
+
+	//房间管理类
+	shared_ptr<House> house;
 
 };
 
