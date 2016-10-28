@@ -67,7 +67,7 @@ private:
 	void startState(const SEND_FUN &send);
 
 	/*
-	处理Run 的逻辑
+	处理run 的逻辑
 	*/
 	void runState(const SEND_FUN &send);
 

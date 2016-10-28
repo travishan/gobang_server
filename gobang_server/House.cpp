@@ -84,10 +84,10 @@ void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uin
 void House::run() {
 	uint32_t curTicks = SDL_GetTicks();
 	uint32_t dt = curTicks - lastTicks;
-	if (dt < 500) {//距离上次时间不足50ms，不更新
+	if (dt < 100) {//距离上次时间不足100ms，不更新
 		return;
 	}
-	//服务器以每秒20帧的速率更新
+	//服务器以每秒10帧的速率更新
 	frame(dt);
 	lastTicks = curTicks;
 }
