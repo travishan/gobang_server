@@ -144,7 +144,7 @@ void ServerSocket::run() {
 	while (running) {
 		int num_rdy = SDLNet_CheckSockets(socket_set, 50);
 		if (num_rdy <= 0) {//没有需要更新的socket，处理逻辑	
-
+			house->run();
 		} else {//有socket流入或有数据流入
 				//有socket流入
 			if (SDLNet_SocketReady(server_socket)) {

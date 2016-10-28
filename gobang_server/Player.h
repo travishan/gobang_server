@@ -19,6 +19,7 @@ public:
 	Player();
 	Player(const string &name);
 	~Player();
+
 	//记录一步棋
 	void addStep(const B_POINT &p);
 
@@ -30,28 +31,38 @@ public:
 	//get set 相关函数
 	void setName(string n) { name = n; }
 	string getName() {return name;}
-	//void setSocket(TCPsocket s) { socket = s; }
-	//TCPsocket getSocket() {return socket;}
+	void setSocketIndex(int s) { socketIndex = s; }
+	int getSocketIndex() {return socketIndex;}
 	void setConnected(bool con) {connected = con;}
 	bool getConnected() {return connected;}
 	void setRegret(bool reg) {regret= reg;}
 	bool getRegret() {return regret;}
 	void setColor(CHESS_COLOR c) { color = c; }
 	CHESS_COLOR getColor() { return color; }
+	void setRoomIndex(int index) { roomIndex = index; }
+	int getRoomIndex() { return roomIndex; }
 
 private:
 	//玩家id
 	string name;
-	////玩家的socket
-	//TCPsocket socket;
+
+	//玩家的socket索引
+	int socketIndex;
+
 	//玩家走过的棋子记录
 	vector<B_POINT> record;
+
 	//是否连接
 	bool connected;
+
 	//是否悔棋
 	bool regret;
+
 	//颜色
 	CHESS_COLOR color;
+
+	//房间号
+	int roomIndex;
 };
 
 

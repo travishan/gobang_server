@@ -17,6 +17,8 @@
 #include <memory>
 #include <iostream>
 #include <functional>
+#include <algorithm>
+
 
 using namespace std;
 
@@ -24,20 +26,19 @@ using namespace std;
 #define GRID_NUM 15
 #define GRID_COUNT 15*15
 
-//客户端向服务器发送的消息头   uint16_t格式
-#define FLAG_QUIT 0x0000   //退出消息
-#define FLAG_CONN 0x0010   //连接
-#define FLAG_PLAY 0x0011    //下棋
-#define FLAG_REGRET 0x0012 //悔棋
+//客户端向服务器发送的消息头   uint16_t类型
+#define FLAG_PLAY 0x0011				//下棋
+#define FLAG_ASK_REGRET 0x0012	//请求悔棋
+#define FLAG_RETURN_REGRET 0x0013  //另一方返回是否同意悔棋
 
-//服务端向客户端发送的消息头  uint16_t格式
-#define FLAG_FULL 0x0013   //满员
-#define FLAG_UPDATE 0x0014  //更新游戏状态
-#define FLAG_TIME 0x0015 // 更新游戏时间
-
-
-
-
+//服务端向客户端发送的消息头  uint16_t类型
+#define FLAG_WAIT 0x0021				//等待另一个玩家
+#define FLAG_START 0x0022				//开始游戏
+#define FLAG_RUN 0x0023					//等待
+#define FLAG_CHANGE 0x0024			//换边
+#define FLAG_QUERY_REGRET 0x0025//询问另一个
+#define FLAG_REGRETED 0x0026		//悔棋
+#define FLAG_FULL 0x0027					//所有房间都满了
 
 typedef struct
 {
@@ -56,10 +57,11 @@ enum CHESS_COLOR
 //游戏状态  房间中的游戏状态
 enum GameState
 {
-	Setting = 2017,
-	Single,
-	Network,
-	Ending
+	WAIT = 0,
+	START,
+	RUN,
+	REGRET,
+	END
 };
 
 

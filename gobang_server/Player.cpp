@@ -4,7 +4,7 @@ Player::Player() :Player("") {
 
 }
 
-Player::Player(const string &name) :name(name), connected(false), regret(false) {
+Player::Player(const string &name) :name(name), socketIndex(0), connected(false), regret(false), roomIndex(0){
 	record.reserve(150);
 }
 

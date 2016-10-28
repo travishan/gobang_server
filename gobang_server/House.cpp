@@ -6,12 +6,15 @@ House::House() :roomIndex(0), playerIndex(0) {
 	initRooms();
 }
 
-House::~House() {}
+House::~House() {
+
+}
 
 void House::addPlayer(int socketIndex) {
 	shared_ptr<Player> p = make_shared<Player>(Player());
+	p->setSocketIndex(socketIndex);
 	players.push_back(p);
-	playerSocketMap.insert(mapPair(playerIndex, socketIndex));
+	socketPlayerMap.insert(mapPair(socketIndex, playerIndex));
 
 	addInRoom(playerIndex);
 
@@ -21,7 +24,7 @@ void House::addPlayer(int socketIndex) {
 
 void House::addInRoom(int playerIndex) {
 	int count = 0;
-	while (!rooms[roomIndex]->addPlayer(players[playerIndex])) {//room初始化失败
+	while (!rooms[roomIndex]->addPlayer(players[playerIndex], playerIndex)) {//room初始化失败
 		roomIndex = (roomIndex + 1) % ROOM_NUM;
 		if (++count >= ROOM_NUM) {
 			cout << "No empty room in house!!" << endl;
@@ -29,54 +32,61 @@ void House::addInRoom(int playerIndex) {
 		}
 	}
 	//初始化成功，更新playerRoomMap
-	playerRoomMap.insert(mapPair(playerIndex, roomIndex));
+	roomPlayerMap.insert(mapPair(roomIndex, playerIndex));
 	roomIndex = (roomIndex + 1) % ROOM_NUM;
 }
 
 void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uint16_t length) {
-	switch (flag) {
-	case FLAG_CONN:
-	{
-		cout << "conn消息！" << endl;
+	//通过socketIndex 找到对应的palyerIndex
+	//mapIterator it = find_if(playerSocketMap.begin(), playerSocketMap.end(), map_value_finder(socketIndex));
+	mapIterator it = socketPlayerMap.find(socketIndex);
+	if (it == socketPlayerMap.end()) {//如果没有找到则返回
+		cout << "不能通过socket找到玩家" << endl;
+		return;
 	}
-	break;
+	//找到的map第一个key为palyerIndex，value为socketIndex
+	Player *player = players.at(it->first).get();
+	int rIndex = player->getRoomIndex();
+	switch (flag) {
 	case FLAG_PLAY:
 	{
 		B_POINT p = *((B_POINT*)data);
-
 		cout << "横坐标:" << p.row << "竖坐标：" << p.col << endl;
-
-		delete data;
-		uint16_t flag = FLAG_TIME;
-		int time = 10;
-		uint16_t length = sizeof(int);
-		sendFun(socketIndex, (uint8_t*)&time, length, flag);
-	}
-	break;
-	case FLAG_QUIT:
+	}break;
+	case FLAG_ASK_REGRET:
 	{
 
-	}
-	break;
-	case FLAG_REGRET:
+	}break;
+	case FLAG_RETURN_REGRET:
 	{
 
-	}
-	break;
+	}break;
 	}
 }
 
-//发送消息到客户端
-void House::sendData() {
-	
+//执行一帧
+void House::run() {
+	uint32_t curTicks = SDL_GetTicks();
+	uint32_t dt = curTicks - lastTicks;
+	if (dt < 50) {//距离上次时间不足50ms，不更新
+		return;
+	}
+	//服务器以每秒20帧的速率更新
+	frame(dt);
+}
+
+//逻辑
+void House::frame(uint32_t dt) {
+	for (int i = 0; i < rooms.size(); ++i) {
+		Room *room = rooms[i].get();
+		room->frame(dt);
+	}
 }
 
 //设置可调用函数类型sendFun
 void House::setSendFun(SEND_FUN sendFun) {
 	this->sendFun = sendFun;
 }
-
-
 
 /******************************
 
