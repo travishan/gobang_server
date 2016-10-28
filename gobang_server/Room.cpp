@@ -1,7 +1,7 @@
 #include "Room.h"
 
 Room::Room() :
-	p1(nullptr), p2(nullptr), p1Index(0), p2Index(0),
+	p1(nullptr), p2(nullptr), p1Index(-1), p2Index(-1),
 	currentPlayer(N), lastTime(0), playerNum(0),
 	gameState(WAIT), lastTicks(0) {
 
@@ -47,6 +47,7 @@ void Room::initRoom() {
 
 //执行游戏逻辑
 void Room::frame(uint32_t dt, const SEND_FUN &send) {
+	checkDisconnect();
 	switch (gameState) {
 	case WAIT:
 	{
@@ -55,7 +56,7 @@ void Room::frame(uint32_t dt, const SEND_FUN &send) {
 	break;
 	case START:
 	{
-
+		startState(send);
 	}
 	break;
 	case RUN:
@@ -70,9 +71,19 @@ void Room::frame(uint32_t dt, const SEND_FUN &send) {
 	break;
 	case END:
 	{
+		//cout << "有玩家断开连接" << endl;
 
 	}
 	break;
+	}
+}
+
+/*
+检查有无掉线玩家
+*/
+void Room::checkDisconnect() {
+	if ((p1 != nullptr && p1->isDisconnected()) || (p2 != nullptr && p2->isDisconnected())) {
+		gameState = END;
 	}
 }
 
@@ -82,6 +93,32 @@ void Room::frame(uint32_t dt, const SEND_FUN &send) {
 void Room::waitState(const SEND_FUN &send) {
 	if (playerNum >= 2) {
 		gameState = START;
+		return;
+	}
+	FlagType flag = FLAG_WAIT;
+	LengthType length = 0;
+	DataType data = nullptr;
+	if (p1 != nullptr && !p1->isDisconnected()) {
+		send(p1Index, data, length, flag);
+	}
+	if (p2 != nullptr && !p2->isDisconnected()) {
+		send(p2Index, data, length, flag);
+	}
+}
+
+/*
+处理start 的逻辑
+*/
+void Room::startState(const SEND_FUN &send) {
+	FlagType flag = FLAG_RUN;
+	char data[10] = { "gamerun" };
+	LengthType length = strlen(data) + 1;
+
+	if (p1 != nullptr && !p1->isDisconnected()) {
+		send(p1Index, (DataType)data, length, flag);
+	}
+	if (p2 != nullptr && !p2->isDisconnected()) {
+		send(p2Index, (DataType)data, length, flag);
 	}
 }
 

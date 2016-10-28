@@ -3,7 +3,6 @@
 ServerSocket::ServerSocket() : running(1), next_ind(0), server_socket(nullptr), socket_set(nullptr), house(make_shared<House>(House())){
 	
 	for (int i = 0; i < MAX_SOCKETS; ++i) {
-		//clients[i] = Client();
 		sockets[i] = nullptr;
 	}
 
@@ -55,6 +54,7 @@ void ServerSocket::closeSocket(int index) {
 		exit(-1);
 	}
 
+	house->disconnectPlayer(index);
 	//memset(&clients[index], 0x00, sizeof(Client));
 	SDLNet_TCP_Close(sockets[index]);
 	sockets[index] = nullptr;

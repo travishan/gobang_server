@@ -19,6 +19,9 @@ class Room
 {
 	friend class Referee;
 	typedef function<void(int, uint8_t*, uint16_t, uint16_t)> SEND_FUN;
+	typedef uint16_t FlagType;
+	typedef uint16_t LengthType;
+	typedef uint8_t* DataType;
 public:
 	Room();
 	~Room();
@@ -59,10 +62,19 @@ private:
 	void waitState(const SEND_FUN &send);
 
 	/*
+	处理start 的逻辑
+	*/
+	void startState(const SEND_FUN &send);
+
+	/*
 	处理Run 的逻辑
 	*/
 	void runState(const SEND_FUN &send);
 
+	/*
+	检查有无掉线玩家
+	*/
+	void checkDisconnect();
 private:
 	//玩家对象
 	shared_ptr<Player> p1, p2;

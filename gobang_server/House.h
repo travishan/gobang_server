@@ -22,19 +22,34 @@ public:
 	House();
 	~House();
 
-	//有玩家连接
+	/*
+	有玩家连接
+	*/
 	void addPlayer(int socketIndex);
 
-	//加入房间
+	/*
+	玩家断开连接
+	*/
+	void disconnectPlayer(int socketIndex);
+
+	/*
+	加入房间
+	*/
 	void addInRoom(int playerIndex);
 
-	//处理消息
+	/*
+	处理消息
+	*/
 	void handleRecieveData(int socketIndex, uint16_t flag, uint8_t* data, uint16_t length);
 	
-	//设置可调用函数类型sendFun
+	/*
+	设置可调用函数类型sendFun
+	*/
 	void setSendFun(SEND_FUN sendFun);
 
-	//执行一帧
+	/*
+	执行一帧
+	*/
 	void run();
 private:
 	//逻辑

@@ -10,9 +10,11 @@ House::~House() {
 
 }
 
+/*
+有玩家连接
+*/
 void House::addPlayer(int socketIndex) {
-	shared_ptr<Player> p = make_shared<Player>(Player());
-	p->setSocketIndex(socketIndex);
+	shared_ptr<Player> p = make_shared<Player>(Player(socketIndex));
 	players.push_back(p);
 	socketPlayerMap.insert(mapPair(socketIndex, playerIndex));
 
@@ -21,6 +23,17 @@ void House::addPlayer(int socketIndex) {
 	++playerIndex;
 
 }
+
+/*
+玩家断开连接
+*/
+void House::disconnectPlayer(int socketIndex) {
+	mapIterator it = socketPlayerMap.find(socketIndex);
+	if (it != socketPlayerMap.end()) {
+		players.at(it->second)->disconnect();
+	}
+}
+
 
 void House::addInRoom(int playerIndex) {
 	int count = 0;
@@ -31,9 +44,12 @@ void House::addInRoom(int playerIndex) {
 			return;
 		}
 	}
+	cout << "玩家" << playerIndex << "成功加入" << roomIndex << "房间" << endl;
 	//初始化成功，更新playerRoomMap
 	roomPlayerMap.insert(mapPair(roomIndex, playerIndex));
-	roomIndex = (roomIndex + 1) % ROOM_NUM;
+	if (rooms[roomIndex]->getPlayerNum() >= 2) {
+		roomIndex = (roomIndex + 1) % ROOM_NUM;
+	}
 }
 
 void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uint16_t length) {
@@ -79,7 +95,7 @@ void House::run() {
 void House::frame(uint32_t dt) {
 	for (int i = 0; i < rooms.size(); ++i) {
 		Room *room = rooms[i].get();
-		room->frame(dt);
+		room->frame(dt,sendFun);
 	}
 }
 

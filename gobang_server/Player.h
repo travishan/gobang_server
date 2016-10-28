@@ -17,7 +17,7 @@ class Player
 	typedef vector<B_POINT>::size_type size_t;
 public:
 	Player();
-	Player(const string &name);
+	Player(int socket);
 	~Player();
 
 	//记录一步棋
@@ -28,15 +28,19 @@ public:
 	recordIterator end() { return record.end(); }
 	size_t size() { return size(); }
 
+	//断开连接
+	void disconnect() { disconnected = true; }
+
 	//get set 相关函数
 	void setName(string n) { name = n; }
-	string getName() {return name;}
+	string getName() { return name; }
 	void setSocketIndex(int s) { socketIndex = s; }
-	int getSocketIndex() {return socketIndex;}
-	void setConnected(bool con) {connected = con;}
-	bool getConnected() {return connected;}
-	void setRegret(bool reg) {regret= reg;}
-	bool getRegret() {return regret;}
+	int getSocketIndex() { return socketIndex; }
+	void setConnected(bool con) { connected = con; }
+	bool getConnected() { return connected; }
+	bool isDisconnected() { return disconnected; }
+	void setRegret(bool reg) { regret = reg; }
+	bool getRegret() { return regret; }
 	void setColor(CHESS_COLOR c) { color = c; }
 	CHESS_COLOR getColor() { return color; }
 	void setRoomIndex(int index) { roomIndex = index; }
@@ -54,6 +58,9 @@ private:
 
 	//是否连接
 	bool connected;
+
+	//是否断开
+	bool disconnected;
 
 	//是否悔棋
 	bool regret;
