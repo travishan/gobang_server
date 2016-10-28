@@ -84,16 +84,17 @@ void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uin
 void House::run() {
 	uint32_t curTicks = SDL_GetTicks();
 	uint32_t dt = curTicks - lastTicks;
-	if (dt < 50) {//距离上次时间不足50ms，不更新
+	if (dt < 500) {//距离上次时间不足50ms，不更新
 		return;
 	}
 	//服务器以每秒20帧的速率更新
 	frame(dt);
+	lastTicks = curTicks;
 }
 
 //逻辑
 void House::frame(uint32_t dt) {
-	for (int i = 0; i < rooms.size(); ++i) {
+	for (size_t i = 0; i < rooms.size(); ++i) {
 		Room *room = rooms[i].get();
 		room->frame(dt,sendFun);
 	}

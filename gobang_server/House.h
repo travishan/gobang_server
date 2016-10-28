@@ -52,16 +52,29 @@ public:
 	*/
 	void run();
 private:
-	//逻辑
+	/*
+	逻辑
+	*/
 	void frame(uint32_t dt);
 
-	//初始化room vector
+	/*
+	初始化room vector
+	*/
 	void initRooms();
 
-	//初始化玩家vector
+	/*
+	初始化玩家vector
+	*/
 	void initPlayers();
 
-	//通过value查找key  内部类
+	/*
+	检查是否有离线的玩家
+	*/
+
+
+	/*
+	通过value查找key  内部类
+	*/
 	class map_value_finder
 	{
 	public:

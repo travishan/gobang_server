@@ -110,15 +110,13 @@ void Room::waitState(const SEND_FUN &send) {
 ´¦Àístart µÄÂß¼­
 */
 void Room::startState(const SEND_FUN &send) {
-	FlagType flag = FLAG_RUN;
-	char data[10] = { "gamerun" };
-	LengthType length = strlen(data) + 1;
+	FlagType flag = FLAG_START;
 
 	if (p1 != nullptr && !p1->isDisconnected()) {
-		send(p1Index, (DataType)data, length, flag);
+		send(p1Index, nullptr, 0, flag);
 	}
 	if (p2 != nullptr && !p2->isDisconnected()) {
-		send(p2Index, (DataType)data, length, flag);
+		send(p2Index, nullptr, 0, flag);
 	}
 }
 
