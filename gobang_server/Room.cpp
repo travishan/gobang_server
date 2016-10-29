@@ -12,10 +12,12 @@ Room::~Room() {}
 void Room::initP1(const shared_ptr<Player> &player, int index) {
 	p1 = player;
 	p1Index = index;
+	p1->setColor(B);
 }
 void Room::initP2(const shared_ptr<Player> &player, int index) {
 	p2 = player;
 	p2Index = index;
+	p2->setColor(W);
 }
 
 bool Room::addPlayer(const shared_ptr<Player> &player, int index) {
@@ -112,12 +114,13 @@ void Room::waitState(const SEND_FUN &send) {
 void Room::startState(const SEND_FUN &send) {
 	FlagType flag = FLAG_START;
 
-	if (p1 != nullptr && !p1->isDisconnected()) {
-		send(p1Index, nullptr, 0, flag);
-	}
-	if (p2 != nullptr && !p2->isDisconnected()) {
-		send(p2Index, nullptr, 0, flag);
-	}
+	CHESS_COLOR color = p1->getColor();//发送客户端的颜色
+	LengthType length = sizeof(color);
+	send(p1Index, (DataType)&color, length, flag);
+
+	color = p2->getColor();
+	length = sizeof(color);
+	send(p2Index, (DataType)&color, length, flag);
 }
 
 /*

@@ -19,9 +19,6 @@ class Room
 {
 	friend class Referee;
 	typedef function<void(int, uint8_t*, uint16_t, uint16_t)> SEND_FUN;
-	typedef uint16_t FlagType;
-	typedef uint16_t LengthType;
-	typedef uint8_t* DataType;
 public:
 	Room();
 	~Room();

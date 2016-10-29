@@ -77,6 +77,10 @@ void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uin
 	{
 
 	}break;
+	case FLAG_READY:
+	{
+
+	}break;
 	}
 }
 

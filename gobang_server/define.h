@@ -30,6 +30,7 @@ using namespace std;
 #define FLAG_PLAY 0x0011				//下棋
 #define FLAG_ASK_REGRET 0x0012	//请求悔棋
 #define FLAG_RETURN_REGRET 0x0013  //另一方返回是否同意悔棋
+#define FLAG_READY 0x0014   //客户端准备好开始游戏
 
 //服务端向客户端发送的消息头  uint16_t类型
 #define FLAG_WAIT 0x0021				//等待另一个玩家
@@ -39,6 +40,10 @@ using namespace std;
 #define FLAG_QUERY_REGRET 0x0025//询问另一个
 #define FLAG_REGRETED 0x0026		//悔棋
 #define FLAG_FULL 0x0027					//所有房间都满了
+
+typedef uint16_t FlagType;
+typedef uint16_t LengthType;
+typedef uint8_t* DataType;
 
 typedef struct
 {
