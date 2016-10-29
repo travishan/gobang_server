@@ -40,10 +40,22 @@ using namespace std;
 #define FLAG_QUERY_REGRET 0x0025//询问另一个
 #define FLAG_REGRETED 0x0026		//悔棋
 #define FLAG_FULL 0x0027					//所有房间都满了
+#define FLAG_END 0x0028					//游戏结束
 
 typedef uint16_t FlagType;
 typedef uint16_t LengthType;
 typedef uint8_t* DataType;
+
+/*
+消息包格式
+*/
+typedef struct
+{
+	GameState gameState;
+	CHESS_COLOR side;
+	CHESS_COLOR current;
+	uint32_t time;
+}Messge;
 
 typedef struct
 {
