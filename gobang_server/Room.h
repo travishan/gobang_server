@@ -73,28 +73,37 @@ private:
 	*/
 	void checkDisconnect();
 private:
-	//玩家对象
+	/*玩家对象
+	*/
 	shared_ptr<Player> p1, p2;
 
-	//玩家索引
+	/*玩家索引
+	*/
 	int p1Index, p2Index;
 
-	//棋盘
+	/*棋盘
+	*/
 	CHESS_COLOR chessBoard[GRID_NUM][GRID_NUM];
 
-	//当前下子方
+	/*当前下子方
+	*/
 	CHESS_COLOR currentPlayer;
 
-	//时间计时
+	/*时间计时
+	*/
 	int lastTime;
 
-	//当前人数
+	/*当前人数
+	*/
 	int playerNum;
 
-	//游戏状态
+	/*游戏状态
+	*/
 	GameState gameState;
 
-	//时间戳
+	/*
+	时间戳
+	*/
 	uint32_t lastTicks;
 };
 
