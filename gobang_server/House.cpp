@@ -60,8 +60,9 @@ void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uin
 		cout << "不能通过socket找到玩家" << endl;
 		return;
 	}
-	//找到的map第一个key为palyerIndex，value为socketIndex
-	Player *player = players.at(it->first).get();
+	//找到的map第一个key为socketIndex，value为palyerIndex
+	int playerIndex = it->second;
+	Player *player = players.at(it->second).get();
 	int rIndex = player->getRoomIndex();
 	switch (flag) {
 	case FLAG_PLAY:
@@ -79,7 +80,8 @@ void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uin
 	}break;
 	case FLAG_READY:
 	{
-
+		player->setPrepared(true);
+		cout << "玩家" << playerIndex << "准备好了" << endl;
 	}break;
 	}
 }
@@ -88,7 +90,7 @@ void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uin
 void House::run() {
 	uint32_t curTicks = SDL_GetTicks();
 	uint32_t dt = curTicks - lastTicks;
-	if (dt < 100) {//距离上次时间不足100ms，不更新
+	if (dt < 1000) {//距离上次时间不足100ms，不更新
 		return;
 	}
 	//服务器以每秒10帧的速率更新

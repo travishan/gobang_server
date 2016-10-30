@@ -51,11 +51,16 @@ typedef uint8_t* DataType;
 */
 typedef struct
 {
-	GameState gameState;
-	CHESS_COLOR side;
-	CHESS_COLOR current;
-	uint32_t time;
-}Messge;
+	uint16_t name[16];
+	uint16_t color;//Íæ¼ÒÑÕÉ«
+	uint16_t connected;
+	uint16_t disconnected;
+	uint16_t regret;
+	uint16_t roomIndx;
+	uint16_t playerIndex;
+	uint16_t yourIndex;
+	uint16_t prepared;
+}WaitMessageStruct;
 
 typedef struct
 {
@@ -80,6 +85,9 @@ enum GameState
 	REGRET,
 	END
 };
+
+
+
 
 
 inline

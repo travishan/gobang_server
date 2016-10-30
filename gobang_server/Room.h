@@ -72,6 +72,16 @@ private:
 	检查有无掉线玩家
 	*/
 	void checkDisconnect();
+
+	/*
+	获得waitMessage
+	*/
+	WaitMessageStruct getWaitMessage(int pi);
+
+	/*
+	发送消息函数
+	*/
+	void sendPlayerMessage(const SEND_FUN &send, FlagType flag);
 private:
 	/*玩家对象
 	*/

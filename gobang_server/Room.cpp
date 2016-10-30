@@ -4,7 +4,7 @@ Room::Room() :
 	p1(nullptr), p2(nullptr), p1Index(-1), p2Index(-1),
 	currentPlayer(N), lastTime(0), playerNum(0),
 	gameState(WAIT), lastTicks(0) {
-
+	initRoom();
 }
 
 Room::~Room() {}
@@ -13,11 +13,13 @@ void Room::initP1(const shared_ptr<Player> &player, int index) {
 	p1 = player;
 	p1Index = index;
 	p1->setColor(B);
+	p1->setName("玩家1");
 }
 void Room::initP2(const shared_ptr<Player> &player, int index) {
 	p2 = player;
 	p2Index = index;
 	p2->setColor(W);
+	p2->setName("玩家2");
 }
 
 bool Room::addPlayer(const shared_ptr<Player> &player, int index) {
@@ -42,7 +44,7 @@ void Room::initAttribute() {
 }
 
 void Room::initRoom() {
-	initRoom();
+	initBoard();
 	initAttribute();
 }
 
@@ -90,22 +92,41 @@ void Room::checkDisconnect() {
 }
 
 /*
+获得waitMessage
+*/
+WaitMessageStruct Room::getWaitMessage(int pi) {
+	WaitMessageStruct message;
+	memset(&message, 0, sizeof(message));
+	Player *p = nullptr;
+	if (pi == p1Index) 
+		p = p1.get();
+	else
+		p = p2.get();
+	if (p == nullptr) {
+		return message;
+	}
+	message.color = (uint16_t)p->getColor();
+	message.connected = (uint16_t)p->getConnected();
+	message.disconnected = (uint16_t)p->isDisconnected();
+	memcpy(message.name, p->getName().c_str(), 16);
+	message.regret = (uint16_t)p->getRegret();
+	message.roomIndx = (uint16_t)p->getRoomIndex();
+	message.playerIndex = (uint16_t)pi;
+	message.prepared = (uint16_t)p->getPrepared();
+	return message;
+}
+
+/*
 处理wait 的逻辑
 */
 void Room::waitState(const SEND_FUN &send) {
 	if (playerNum >= 2) {
 		gameState = START;
+		cout << "当前人数2人，进入开始状态" << endl;
 		return;
 	}
 	FlagType flag = FLAG_WAIT;
-	LengthType length = 0;
-	DataType data = nullptr;
-	if (p1 != nullptr && !p1->isDisconnected()) {
-		send(p1Index, data, length, flag);
-	}
-	if (p2 != nullptr && !p2->isDisconnected()) {
-		send(p2Index, data, length, flag);
-	}
+	sendPlayerMessage(send, flag);
 }
 
 /*
@@ -114,13 +135,7 @@ void Room::waitState(const SEND_FUN &send) {
 void Room::startState(const SEND_FUN &send) {
 	FlagType flag = FLAG_START;
 
-	CHESS_COLOR color = p1->getColor();//发送客户端的颜色
-	LengthType length = sizeof(color);
-	send(p1Index, (DataType)&color, length, flag);
-
-	color = p2->getColor();
-	length = sizeof(color);
-	send(p2Index, (DataType)&color, length, flag);
+	sendPlayerMessage(send, flag);
 }
 
 /*
@@ -128,4 +143,26 @@ void Room::startState(const SEND_FUN &send) {
 */
 void Room::runState(const SEND_FUN &send) {
 
+}
+
+
+
+/*
+发送消息函数
+*/
+void Room::sendPlayerMessage(const SEND_FUN &send, FlagType flag) {
+	WaitMessageStruct messageP1, messageP2;
+	messageP1 = getWaitMessage(p1Index);
+	messageP2 = getWaitMessage(p2Index);
+
+	if (p1 != nullptr && !p1->isDisconnected()) {
+		messageP2.yourIndex = messageP1.yourIndex = p1Index;
+		send(p1Index, (DataType)&messageP1, sizeof(messageP1), flag);
+		send(p1Index, (DataType)&messageP2, sizeof(messageP2), flag);
+	}
+	if (p2 != nullptr && !p2->isDisconnected()) {
+		messageP2.yourIndex = messageP1.yourIndex = p2Index;
+		send(p2Index, (DataType)&messageP1, sizeof(messageP1), flag);
+		send(p2Index, (DataType)&messageP2, sizeof(messageP2), flag);
+	}
 }

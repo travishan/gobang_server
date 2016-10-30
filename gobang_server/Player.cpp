@@ -4,7 +4,7 @@ Player::Player() :Player(0) {
 
 }
 
-Player::Player(int socket) :name(""), socketIndex(socket), connected(true), disconnected(false), regret(false), roomIndex(0){
+Player::Player(int socket) :name(""), socketIndex(socket), connected(true), disconnected(false), regret(false), roomIndex(0), prepared(false){
 	record.reserve(150);
 }
 

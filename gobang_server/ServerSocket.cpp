@@ -94,26 +94,25 @@ void ServerSocket::errorClose(int index) {
 void ServerSocket::recvData(int index) {
 	uint16_t flag;
 	int numRecv = SDLNet_TCP_Recv(sockets[index], &flag, sizeof(uint16_t));
-
+	uint8_t *tempData = nullptr;
 	if (numRecv <= 0) {//若numRecv小于0  则发生异常 关闭socket
 		errorClose(index);
 		return;
 	} else {//否则，接收剩余消息的长度信息
-		uint16_t length;
+		uint16_t length = 0;
 		numRecv = SDLNet_TCP_Recv(sockets[index], &length, sizeof(uint16_t));
 		if (numRecv <= 0) {//若numRecv小于0  则发生异常 关闭socket
 			errorClose(index);
 			return;
 		} else if(length > 0) {//若length大于0 ，则接收剩余信息
-			uint8_t *tempData = new uint8_t[length];
+			tempData = new uint8_t[length];
 			numRecv = SDLNet_TCP_Recv(sockets[index], tempData, length);
 			if (numRecv <= 0) {//若numRecv小于0  则发生异常 关闭socket
 				errorClose(index);
 				return;
-			} else {
-				house->handleRecieveData(index, flag, tempData, length);
 			}
 		}
+		house->handleRecieveData(index, flag, tempData, length);
 	}
 }
 

@@ -38,6 +38,7 @@ public:
 	int getSocketIndex() { return socketIndex; }
 	void setConnected(bool con) { connected = con; }
 	bool getConnected() { return connected; }
+	void setDisconnected(bool dis) { disconnected = dis; }
 	bool isDisconnected() { return disconnected; }
 	void setRegret(bool reg) { regret = reg; }
 	bool getRegret() { return regret; }
@@ -45,31 +46,44 @@ public:
 	CHESS_COLOR getColor() { return color; }
 	void setRoomIndex(int index) { roomIndex = index; }
 	int getRoomIndex() { return roomIndex; }
-
+	void setPrepared(bool pre) { prepared = pre; }
+	bool getPrepared() { return prepared; }
 private:
-	//玩家id
+	/*玩家id
+	*/
 	string name;
 
-	//玩家的socket索引
+	/*玩家的socket索引
+	*/
 	int socketIndex;
 
-	//玩家走过的棋子记录
+	/*玩家走过的棋子记录
+	*/
 	vector<B_POINT> record;
 
-	//是否连接
+	/*是否连接
+	*/
 	bool connected;
 
-	//是否断开
+	/*是否断开
+	*/
 	bool disconnected;
 
-	//是否悔棋
+	/*是否悔棋
+	*/
 	bool regret;
 
-	//颜色
+	/*颜色
+	*/
 	CHESS_COLOR color;
 
-	//房间号
+	/*房间号
+	*/
 	int roomIndex;
+
+	/*是否准备
+	*/
+	bool prepared;
 };
 
 
