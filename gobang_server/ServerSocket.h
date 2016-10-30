@@ -3,9 +3,8 @@
 
 
 #include "define.h"
+#include "MessageDefine.h"
 #include "House.h"
-
-
 
 #define MAX_PACKET 1024
 #define MAX_SOCKETS 0x10
@@ -14,13 +13,8 @@
 #define CHECK_INTERVAL 50
 
 
-typedef struct
-{
-	int in_use;
-	int questing;
-	uint8_t amt_wood;
-	uint32_t timer_wood;
-}Client;
+
+
 
 class ServerSocket
 {

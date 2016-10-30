@@ -2,6 +2,7 @@
 #define __HOUSE__H__
 
 #include "define.h"
+#include "MessageDefine.h"
 #include "Player.h"
 #include "Room.h"
 

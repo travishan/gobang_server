@@ -3,8 +3,11 @@
 Room::Room() :
 	p1(nullptr), p2(nullptr), p1Index(-1), p2Index(-1),
 	currentPlayer(N), lastTime(0), playerNum(0),
-	gameState(WAIT), lastTicks(0) {
+	gameState(WAIT), lastPlayerMessageTicks(0), lastGameMessageTicks(0)
+{
 	initRoom();
+
+	lastPlayerMessageTicks = lastGameMessageTicks = SDL_GetTicks();
 }
 
 Room::~Room() {}
@@ -80,6 +83,7 @@ void Room::frame(uint32_t dt, const SEND_FUN &send) {
 	}
 	break;
 	}
+	sendMessage(send);
 }
 
 /*
@@ -92,16 +96,26 @@ void Room::checkDisconnect() {
 }
 
 /*
-获得waitMessage
+获得GameMessage
 */
-WaitMessageStruct Room::getWaitMessage(int pi) {
-	WaitMessageStruct message;
+Game_Message Room::getGameMessage() {
+	Game_Message message;
+	message.gameState = (uint16_t)gameState;
+	message.curSide = (uint16_t)currentPlayer;
+	message.p1Index = (uint16_t)p1Index;
+	message.p2Index = (uint16_t)p2Index;
+	message.playerNum = (uint16_t)playerNum;
+	message.time = (uint16_t)lastTime;
+	return message;
+}
+
+/*
+获得PlayerMessage
+*/
+Player_Message Room::getPlayerMessage(int pi) {
+	Player_Message message;
 	memset(&message, 0, sizeof(message));
-	Player *p = nullptr;
-	if (pi == p1Index) 
-		p = p1.get();
-	else
-		p = p2.get();
+	auto p = getPlayer(pi);
 	if (p == nullptr) {
 		return message;
 	}
@@ -125,17 +139,13 @@ void Room::waitState(const SEND_FUN &send) {
 		cout << "当前人数2人，进入开始状态" << endl;
 		return;
 	}
-	FlagType flag = FLAG_WAIT;
-	sendPlayerMessage(send, flag);
 }
 
 /*
 处理start 的逻辑
 */
 void Room::startState(const SEND_FUN &send) {
-	FlagType flag = FLAG_START;
 
-	sendPlayerMessage(send, flag);
 }
 
 /*
@@ -150,19 +160,55 @@ void Room::runState(const SEND_FUN &send) {
 /*
 发送消息函数
 */
-void Room::sendPlayerMessage(const SEND_FUN &send, FlagType flag) {
-	WaitMessageStruct messageP1, messageP2;
-	messageP1 = getWaitMessage(p1Index);
-	messageP2 = getWaitMessage(p2Index);
+void Room::sendMessage(const SEND_FUN &send) {
+	bool sendP = false, sendG = false;
+	//计算时间戳    游戏信息 发送频率较高，玩家信息发送频率较低
+	uint32_t curTicks = SDL_GetTicks();
+	if (curTicks - lastPlayerMessageTicks > 1000) {
+		sendP = true;
+		lastPlayerMessageTicks = curTicks;
+	}
+	if (curTicks - lastGameMessageTicks > 100) {
+		sendG = true;
+		lastGameMessageTicks = curTicks;
+	}
+	if (sendG) {//发送游戏信息
+		//游戏信息获取
+		Game_Message message = getGameMessage();
+		if (p1 != nullptr && !p1->isDisconnected()) {
+			send(p1Index, (DataType)&message, sizeof(message), FLAG_GAME_INFO);
+		}
+		if (p2 != nullptr && !p2->isDisconnected()) {
+			send(p2Index, (DataType)&message, sizeof(message), FLAG_GAME_INFO);
+		}
+	}
+	if (sendP) {//发送玩家信息
+		//玩家信息获取
+		Player_Message messageP1, messageP2;
+		messageP1 = getPlayerMessage(p1Index);
+		messageP2 = getPlayerMessage(p2Index);
+		if (p1 != nullptr && !p1->isDisconnected()) {
+			messageP2.yourIndex = messageP1.yourIndex = p1Index;
+			send(p1Index, (DataType)&messageP1, sizeof(messageP1), FLAG_PLAYER_INFO);
+			send(p1Index, (DataType)&messageP2, sizeof(messageP2), FLAG_PLAYER_INFO);
+		}
+		if (p2 != nullptr && !p2->isDisconnected()) {
+			messageP2.yourIndex = messageP1.yourIndex = p2Index;
+			send(p2Index, (DataType)&messageP1, sizeof(messageP1), FLAG_PLAYER_INFO);
+			send(p2Index, (DataType)&messageP2, sizeof(messageP2), FLAG_PLAYER_INFO);
+		}
+	}
+}
 
-	if (p1 != nullptr && !p1->isDisconnected()) {
-		messageP2.yourIndex = messageP1.yourIndex = p1Index;
-		send(p1Index, (DataType)&messageP1, sizeof(messageP1), flag);
-		send(p1Index, (DataType)&messageP2, sizeof(messageP2), flag);
-	}
-	if (p2 != nullptr && !p2->isDisconnected()) {
-		messageP2.yourIndex = messageP1.yourIndex = p2Index;
-		send(p2Index, (DataType)&messageP1, sizeof(messageP1), flag);
-		send(p2Index, (DataType)&messageP2, sizeof(messageP2), flag);
-	}
+
+
+/*获取玩家
+*/
+Player* Room::getPlayer(int pi) {
+	Player *p = nullptr;
+	if (pi == p1Index)
+		p = p1.get();
+	else
+		p = p2.get();
+	return p;
 }

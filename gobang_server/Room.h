@@ -2,6 +2,7 @@
 #define __ROOM__H__
 
 
+#include "MessageDefine.h"
 #include "Player.h"
 #include "Referee.h"
 
@@ -74,14 +75,24 @@ private:
 	void checkDisconnect();
 
 	/*
-	获得waitMessage
+	获得GameMessage
 	*/
-	WaitMessageStruct getWaitMessage(int pi);
+	Game_Message getGameMessage();
+
+	/*
+	获得PlayerMessage
+	*/
+	Player_Message getPlayerMessage(int pi);
 
 	/*
 	发送消息函数
 	*/
-	void sendPlayerMessage(const SEND_FUN &send, FlagType flag);
+	void sendMessage(const SEND_FUN &send);
+
+	/*获取玩家
+	*/
+	Player* getPlayer(int pi);
+
 private:
 	/*玩家对象
 	*/
@@ -89,7 +100,7 @@ private:
 
 	/*玩家索引
 	*/
-	int p1Index, p2Index;
+	uint16_t p1Index, p2Index;
 
 	/*棋盘
 	*/
@@ -101,20 +112,20 @@ private:
 
 	/*时间计时
 	*/
-	int lastTime;
+	uint16_t lastTime;
 
 	/*当前人数
 	*/
-	int playerNum;
+	uint16_t playerNum;
 
 	/*游戏状态
 	*/
 	GameState gameState;
 
 	/*
-	时间戳
+	时间戳  用于计算发送消息包的时间间隔
 	*/
-	uint32_t lastTicks;
+	uint32_t lastPlayerMessageTicks,lastGameMessageTicks;
 };
 
 
