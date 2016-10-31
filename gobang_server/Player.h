@@ -29,6 +29,7 @@ public:
 	size_t size() { return size(); }
 	void push_back(const B_POINT &b) { record.push_back(b); }
 	const B_POINT &front() { return record.front(); }
+	void clear() { record.clear(); }
 
 	//¶Ï¿ªÁ¬½Ó
 	void disconnect() { disconnected = true; }

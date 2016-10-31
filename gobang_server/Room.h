@@ -125,7 +125,10 @@ private:
 	*/
 	void sendMessage(const SEND_FUN &send);
 
-
+	/*
+	重新开始
+	*/
+	void restartInit();
 
 private:
 	/*玩家对象

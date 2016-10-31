@@ -108,11 +108,8 @@ void Room::frame(uint32_t dt, const SEND_FUN &send) {
 	}
 	break;
 	case END:
-	{
-		//cout << "有玩家断开连接" << endl;
-		//releaseRoom();
-	}
-	break;
+		restartInit();
+		break;
 	}
 	//发送消息
 	sendMessage(send);
@@ -124,6 +121,29 @@ void Room::frame(uint32_t dt, const SEND_FUN &send) {
 void Room::checkDisconnect() {
 	if ((p1 != nullptr && p1->isDisconnected()) || (p2 != nullptr && p2->isDisconnected())) {
 		gameState = END;
+	}
+}
+
+/*
+重新开始  修改游戏状态为start，重新初始化棋盘，清空玩家棋子记录，交换玩家的颜色，设置黑棋方为先走。
+*/
+void Room::restartInit() {
+	if (p1->getPrepared() && p2->getPrepared()) {
+		gameState = RUN;
+		initBoard();
+		p1->clear();
+		p2->clear();
+		winner = 65535;
+		auto p1Color = p1->getColor();
+		auto p2Color = p2->getColor();
+		p1->setColor(p2Color);
+		p2->setColor(p1Color);
+		if (p1Color == W) {
+			currentPlayer = p1Index;
+		} else {
+			currentPlayer = p2Index;
+		}
+		
 	}
 }
 
@@ -180,6 +200,8 @@ void Room::waitState() {
 void Room::startState() {
 	if (p1->getPrepared() && p2->getPrepared()) {//游戏开始，初始化游戏相关属性
 		cout << "双方已经准备完毕，游戏即将开始" << endl;
+		p1->setPrepared(false);
+		p2->setPrepared(false);
 		gameState = RUN;
 		currentPlayer = p1Index;
 		lastTime = PLAYTIME;
@@ -225,7 +247,7 @@ void Room::sendMessage(const SEND_FUN &send) {
 		sendP = true;
 		lastPlayerMessageTicks = curTicks;
 	}
-	if (curTicks - lastGameMessageTicks > 10) {
+	if (curTicks - lastGameMessageTicks > 25) {
 		sendG = true;
 		lastGameMessageTicks = curTicks;
 	}
