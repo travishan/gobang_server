@@ -26,17 +26,17 @@ using namespace std;
 
 typedef struct
 {
-	int row;
-	int col;
+	uint16_t row;
+	uint16_t col;
 }B_POINT;
 
 /*
 黑白双方   0代表黑房 1代表白方
 */
 typedef uint16_t CHESS_COLOR;
-#define B 0
-#define W 1
-#define N 2
+const uint16_t B = 0;
+const uint16_t W = 1;
+const uint16_t N = 2;
 
 /*
 游戏状态  房间中的游戏状态
@@ -50,8 +50,13 @@ typedef uint16_t GameState;
 
 
 inline
-void fillMatrix(CHESS_COLOR(&a)[15][15], int n) {
-	memset(a, n, sizeof(a));
+void fillMatrix(CHESS_COLOR(&a)[15][15], uint16_t n) {
+	//memset(a, n, sizeof(a));
+	for (int i = 0; i < 15; ++i) {
+		for (int j = 0; j < 15; ++j) {
+			a[i][j] = n;
+		}
+	}
 }
 
 

@@ -19,24 +19,55 @@ Room类
 class Room
 {
 	friend class Referee;
-	typedef function<void(int, uint8_t*, uint16_t, uint16_t)> SEND_FUN;
+	typedef function<void(uint16_t, uint8_t*, uint16_t, uint16_t)> SEND_FUN;
 public:
 	Room();
 	~Room();
 
-	// 初始化玩家1,2
-	bool addPlayer(const shared_ptr<Player> &player, int index);
+	/*
+	初始化玩家1,2
+	*/
+	bool addPlayer(const shared_ptr<Player> &player, uint16_t index);
 
-	//初始化房间
+	/*
+	初始化房间
+	*/
 	void initRoom();
 
-	//执行游戏逻辑
+	/*
+	清空房间
+	*/
+	void releaseRoom();
+
+	/*
+	执行游戏逻辑
+	*/
 	void frame(uint32_t dt, const SEND_FUN &send);
 
+	/*
+	走一步棋
+	*/
+	void playOneStep(uint16_t playerIndex, B_POINT point);
+
+	/*获取玩家
+	*/
+	Player* getPlayer(uint16_t pi);
+	Player* getAnotherPlayer(uint16_t pi);
+
+	/*
+	换边
+	*/
+	void changeSide();
+
 	//get set
-	int getPlayerNum() { return playerNum; }
+	uint16_t getPlayerNum() { return playerNum; }
 	void setGameState(GameState state) { gameState = state; }
 	GameState getGameState() { return gameState; }
+	void setRoomIndex(uint16_t index) { roomIndex = index; }
+	uint16_t getRoomIndex() { return roomIndex; }
+	void setWinner(uint16_t player) { winner = player; }
+	uint16_t getWinner() { return winner; }
+
 private:
 	/*
 	初始化棋盘
@@ -46,28 +77,33 @@ private:
 	/*
 	初始化棋局相关属性
 	*/
-	void initAttribute();
+	void initAttribute(CHESS_COLOR curSide, uint16_t time);
 
 	/*
 	初始化玩家1 和 玩家2
 	*/
-	void initP1(const shared_ptr<Player> &player, int index);
-	void initP2(const shared_ptr<Player> &player, int index);
+	void initP1(const shared_ptr<Player> &player, uint16_t index);
+	void initP2(const shared_ptr<Player> &player, uint16_t index);
+
+	/*
+	释放玩家
+	*/
+	void releasePlayer();
 
 	/*
 	处理wait 的逻辑
 	*/
-	void waitState(const SEND_FUN &send);
+	void waitState();
 
 	/*
 	处理start 的逻辑
 	*/
-	void startState(const SEND_FUN &send);
+	void startState();
 
 	/*
 	处理run 的逻辑
 	*/
-	void runState(const SEND_FUN &send);
+	void runState();
 
 	/*
 	检查有无掉线玩家
@@ -82,16 +118,14 @@ private:
 	/*
 	获得PlayerMessage
 	*/
-	Player_Message getPlayerMessage(int pi);
+	Player_Message getPlayerMessage(uint16_t pi);
 
 	/*
 	发送消息函数
 	*/
 	void sendMessage(const SEND_FUN &send);
 
-	/*获取玩家
-	*/
-	Player* getPlayer(int pi);
+
 
 private:
 	/*玩家对象
@@ -102,13 +136,17 @@ private:
 	*/
 	uint16_t p1Index, p2Index;
 
+	/*房间索引
+	*/
+	uint16_t roomIndex;
+
 	/*棋盘
 	*/
 	CHESS_COLOR chessBoard[GRID_NUM][GRID_NUM];
 
 	/*当前下子方
 	*/
-	CHESS_COLOR currentPlayer;
+	uint16_t currentPlayer;
 
 	/*时间计时
 	*/
@@ -126,6 +164,16 @@ private:
 	时间戳  用于计算发送消息包的时间间隔
 	*/
 	uint32_t lastPlayerMessageTicks,lastGameMessageTicks;
+
+	/*
+	裁判对象
+	*/
+	Referee referee;
+
+	/*
+	胜利方
+	*/
+	uint16_t winner;
 };
 
 

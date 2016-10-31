@@ -13,12 +13,12 @@
 
 class House
 {
-	typedef int PLAYER_INDEX;
-	typedef int ROOM_INDEX;
-	typedef int SOCKET_INDEX;
-	typedef pair<int, int> mapPair;
-	typedef map<int, int>::iterator mapIterator;
-	typedef function<void(int, uint8_t*, uint16_t, uint16_t)> SEND_FUN;
+	typedef uint16_t PLAYER_INDEX;
+	typedef uint16_t ROOM_INDEX;
+	typedef uint16_t SOCKET_INDEX;
+	typedef pair<uint16_t, uint16_t> mapPair;
+	typedef map<uint16_t, uint16_t>::iterator mapIterator;
+	typedef function<void(uint16_t, uint8_t*, uint16_t, uint16_t)> SEND_FUN;
 public:
 	House();
 	~House();
@@ -26,22 +26,22 @@ public:
 	/*
 	有玩家连接
 	*/
-	void addPlayer(int socketIndex);
+	void addPlayer(uint16_t socketIndex);
 
 	/*
 	玩家断开连接
 	*/
-	void disconnectPlayer(int socketIndex);
+	void disconnectPlayer(uint16_t socketIndex);
 
 	/*
 	加入房间
 	*/
-	void addInRoom(int playerIndex);
+	void addInRoom(uint16_t playerIndex);
 
 	/*
 	处理消息
 	*/
-	void handleRecieveData(int socketIndex, uint16_t flag, uint8_t* data, uint16_t length);
+	void handleRecieveData(uint16_t socketIndex, uint16_t flag, uint8_t* data, uint16_t length);
 	
 	/*
 	设置可调用函数类型sendFun
@@ -69,9 +69,9 @@ private:
 	void initPlayers();
 
 	/*
-	检查是否有离线的玩家
+	处理不同Flag的消息
 	*/
-
+	void handlePlay(uint16_t pIndex, Player *plyr, Room *room, DataType data, LengthType length);
 
 	/*
 	通过value查找key  内部类
@@ -79,12 +79,12 @@ private:
 	class map_value_finder
 	{
 	public:
-		map_value_finder(int value) :map_value(value) {}
-		bool operator()(const map<int,int>::value_type &pair) {
+		map_value_finder(uint16_t value) :map_value(value) {}
+		bool operator()(const map<uint16_t,uint16_t>::value_type &pair) {
 			return pair.second == map_value;
 		}
 	private:
-		int map_value;
+		uint16_t map_value;
 	};
 private:
 	//玩家数组

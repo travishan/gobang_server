@@ -13,7 +13,7 @@ House::~House() {
 /*
 有玩家连接
 */
-void House::addPlayer(int socketIndex) {
+void House::addPlayer(uint16_t socketIndex) {
 	shared_ptr<Player> p = make_shared<Player>(Player(socketIndex));
 	players.push_back(p);
 	socketPlayerMap.insert(mapPair(socketIndex, playerIndex));
@@ -27,7 +27,7 @@ void House::addPlayer(int socketIndex) {
 /*
 玩家断开连接
 */
-void House::disconnectPlayer(int socketIndex) {
+void House::disconnectPlayer(uint16_t socketIndex) {
 	mapIterator it = socketPlayerMap.find(socketIndex);
 	if (it != socketPlayerMap.end()) {
 		players.at(it->second)->disconnect();
@@ -35,8 +35,8 @@ void House::disconnectPlayer(int socketIndex) {
 }
 
 
-void House::addInRoom(int playerIndex) {
-	int count = 0;
+void House::addInRoom(uint16_t playerIndex) {
+	uint16_t count = 0;
 	while (!rooms[roomIndex]->addPlayer(players[playerIndex], playerIndex)) {//room初始化失败
 		roomIndex = (roomIndex + 1) % ROOM_NUM;
 		if (++count >= ROOM_NUM) {
@@ -52,23 +52,23 @@ void House::addInRoom(int playerIndex) {
 	}
 }
 
-void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uint16_t length) {
+void House::handleRecieveData(uint16_t socketIndex, uint16_t flag, uint8_t *data, uint16_t length) {
 	//通过socketIndex 找到对应的palyerIndex
 	//mapIterator it = find_if(playerSocketMap.begin(), playerSocketMap.end(), map_value_finder(socketIndex));
 	mapIterator it = socketPlayerMap.find(socketIndex);
 	if (it == socketPlayerMap.end()) {//如果没有找到则返回
-		cout << "不能通过socket找到玩家" << endl;
+		cerr << "不能通过socket找到玩家" << endl;
 		return;
 	}
 	//找到的map第一个key为socketIndex，value为palyerIndex
-	int playerIndex = it->second;
+	uint16_t playerIndex = it->second;
 	Player *player = players.at(it->second).get();
-	int rIndex = player->getRoomIndex();
+	uint16_t rIndex = player->getRoomIndex();
+	auto room = rooms[rIndex].get();
 	switch (flag) {
 	case FLAG_PLAY:
 	{
-		B_POINT p = *((B_POINT*)data);
-		cout << "横坐标:" << p.row << "竖坐标：" << p.col << endl;
+		handlePlay(playerIndex, player, room, data, length);
 	}break;
 	case FLAG_ASK_REGRET:
 	{
@@ -85,6 +85,26 @@ void House::handleRecieveData(int socketIndex, uint16_t flag, uint8_t *data, uin
 	}break;
 	}
 }
+
+/*
+处理不同Flag的消息 
+记得delete data！
+记得delete data！
+记得delete data！
+*/
+void House::handlePlay(uint16_t pIndex, Player *plyr, Room *room, DataType data, LengthType length) {
+	B_POINT p;
+	memcpy(&p, data, length);
+	cout << "横坐标:" << p.row << "竖坐标：" << p.col << endl;
+	room->playOneStep(pIndex, p);
+	cout << "Room :" << room->getRoomIndex() << endl;
+	auto plyr2 = room->getAnotherPlayer(pIndex);
+	if (plyr2 == nullptr) return;
+	sendFun(plyr2->getSocketIndex(), data, length, FLAG_PLAY_INFO);//发送给另外一方
+	room->changeSide();
+	delete data;
+}
+
 
 //执行一帧
 void House::run() {
@@ -118,8 +138,9 @@ private
 ******************************/
 void House::initRooms() {
 	rooms.reserve(ROOM_NUM);
-	for (int i = 0; i < ROOM_NUM; ++i) {
+	for (uint16_t i = 0; i < ROOM_NUM; ++i) {
 		shared_ptr<Room> r = make_shared<Room>(Room());
+		r->setRoomIndex(i);
 		rooms.push_back(r);
 	}
 }

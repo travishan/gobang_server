@@ -11,16 +11,16 @@ Referee::~Referee() {}
 
 
 CHESS_COLOR Referee::checkBoard(const CHESS_COLOR(&board)[GRID_NUM][GRID_NUM]) {
-	for (int row = 0; row < 15; ++row) {
-		for (int col = 0; col < 15; ++col) {
+	for (uint16_t row = 0; row < 15; ++row) {
+		for (uint16_t col = 0; col < 15; ++col) {
 			CHESS_COLOR midColor = board[row][col];
 			if (midColor == N) {
 				continue;
 			}
-			for (int k = 0; k < 4; ++k) {
-				int row1 = row, col1 = col, row2 = row, col2 = col, count = 0;
+			for (uint16_t k = 0; k < 4; ++k) {
+				uint16_t row1 = row, col1 = col, row2 = row, col2 = col, count = 0;
 				bool stop1 = false, stop2 = false;
-				for (int i = 0; i < 5; ++i) {
+				for (uint16_t i = 0; i < 5; ++i) {
 					row1 += dr[k], col1 += dc[k];
 					row2 += dr[k + 4], col2 += dc[k + 4];
 					if (row1 <= 14 && row1 > 0 && col1 <= 14 && col1 > 0 && !stop1) {

@@ -2,7 +2,7 @@
 
 ServerSocket::ServerSocket() : running(1), next_ind(0), server_socket(nullptr), socket_set(nullptr), house(make_shared<House>(House())){
 	
-	for (int i = 0; i < MAX_SOCKETS; ++i) {
+	for (uint16_t i = 0; i < MAX_SOCKETS; ++i) {
 		sockets[i] = nullptr;
 	}
 
@@ -43,7 +43,7 @@ void ServerSocket::init() {
 	}
 }
 
-void ServerSocket::closeSocket(int index) {
+void ServerSocket::closeSocket(uint16_t index) {
 	if (sockets[index] == nullptr) {
 		fprintf(stderr, "ER: Attempted to delete a nullptr socket.\n");
 		return;
@@ -60,7 +60,7 @@ void ServerSocket::closeSocket(int index) {
 	sockets[index] = nullptr;
 }
 
-int ServerSocket::acceptSocket(int index) {
+uint16_t ServerSocket::acceptSocket(uint16_t index) {
 	if (sockets[index]) {
 		fprintf(stderr, "ER: Overriding socket at index %d.\n", index);
 		closeSocket(index);
@@ -80,7 +80,7 @@ int ServerSocket::acceptSocket(int index) {
 }
 
 
-void ServerSocket::errorClose(int index) {
+void ServerSocket::errorClose(uint16_t index) {
 	closeSocket(index);
 
 	const char* err = SDLNet_GetError();
@@ -91,9 +91,9 @@ void ServerSocket::errorClose(int index) {
 	}
 }
 
-void ServerSocket::recvData(int index) {
+void ServerSocket::recvData(uint16_t index) {
 	uint16_t flag;
-	int numRecv = SDLNet_TCP_Recv(sockets[index], &flag, sizeof(uint16_t));
+	int16_t numRecv = SDLNet_TCP_Recv(sockets[index], &flag, sizeof(uint16_t));
 	uint8_t *tempData = nullptr;
 	if (numRecv <= 0) {//若numRecv小于0  则发生异常 关闭socket
 		errorClose(index);
@@ -117,10 +117,10 @@ void ServerSocket::recvData(int index) {
 }
 
 
-void ServerSocket::sendData(int index, uint8_t* data, uint16_t length, uint16_t flag) {
+void ServerSocket::sendData(uint16_t index, uint8_t* data, uint16_t length, uint16_t flag) {
 	uint8_t tempData[MAX_PACKET];
 
-	int offset = 0;
+	uint16_t offset = 0;
 	memcpy(tempData + offset, &flag, sizeof(uint16_t));
 	offset += sizeof(uint16_t);
 
@@ -130,7 +130,7 @@ void ServerSocket::sendData(int index, uint8_t* data, uint16_t length, uint16_t 
 	memcpy(tempData + offset, data, length);
 	offset += length;
 
-	int num_sent = SDLNet_TCP_Send(sockets[index], tempData, offset);
+	uint16_t num_sent = SDLNet_TCP_Send(sockets[index], tempData, offset);
 	if (num_sent < length) {
 		fprintf(stderr, "ER: SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 		closeSocket(index);
@@ -147,13 +147,13 @@ void ServerSocket::run() {
 		} else {//有socket流入或有数据流入
 				//有socket流入
 			if (SDLNet_SocketReady(server_socket)) {
-				int got_socket = acceptSocket(next_ind);
+				uint16_t got_socket = acceptSocket(next_ind);
 				if (!got_socket) {
 					num_rdy--;
 					continue;
 				}
 
-				int chk_count;
+				uint16_t chk_count;
 				for (chk_count = 0; chk_count < MAX_SOCKETS; ++chk_count) {
 					if (sockets[(next_ind + chk_count) % MAX_SOCKETS] == nullptr) break;
 				}
@@ -165,7 +165,7 @@ void ServerSocket::run() {
 			}
 
 			//有数据流入
-			int ind;
+			uint16_t ind;
 			for (ind = 0; (ind < MAX_SOCKETS) && num_rdy; ++ind) {
 				if (sockets[ind] == nullptr) continue;
 				if (!SDLNet_SocketReady(sockets[ind])) continue;
@@ -186,7 +186,7 @@ void ServerSocket::close() {
 		exit(-1);
 	} SDLNet_TCP_Close(server_socket);
 
-	int i;
+	uint16_t i;
 	for (i = 0; i<MAX_SOCKETS; ++i) {
 		if (sockets[i] == nullptr) continue;
 		closeSocket(i);

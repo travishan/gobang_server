@@ -56,6 +56,7 @@ typedef struct
 	uint16_t time;//当前走棋方剩余时间
 	uint16_t p1Index;
 	uint16_t p2Index;
+	uint16_t winner;
 }Game_Message;
 
 /*

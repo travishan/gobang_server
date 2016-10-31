@@ -17,7 +17,7 @@ class Player
 	typedef vector<B_POINT>::size_type size_t;
 public:
 	Player();
-	Player(int socket);
+	Player(uint16_t socket);
 	~Player();
 
 	//记录一步棋
@@ -27,6 +27,8 @@ public:
 	recordIterator begin() { return record.begin(); }
 	recordIterator end() { return record.end(); }
 	size_t size() { return size(); }
+	void push_back(const B_POINT &b) { record.push_back(b); }
+	const B_POINT &front() { return record.front(); }
 
 	//断开连接
 	void disconnect() { disconnected = true; }
@@ -34,8 +36,8 @@ public:
 	//get set 相关函数
 	void setName(string n) { name = n; }
 	string getName() { return name; }
-	void setSocketIndex(int s) { socketIndex = s; }
-	int getSocketIndex() { return socketIndex; }
+	void setSocketIndex(uint16_t s) { socketIndex = s; }
+	uint16_t getSocketIndex() { return socketIndex; }
 	void setConnected(bool con) { connected = con; }
 	bool getConnected() { return connected; }
 	void setDisconnected(bool dis) { disconnected = dis; }
@@ -44,8 +46,8 @@ public:
 	bool getRegret() { return regret; }
 	void setColor(CHESS_COLOR c) { color = c; }
 	CHESS_COLOR getColor() { return color; }
-	void setRoomIndex(int index) { roomIndex = index; }
-	int getRoomIndex() { return roomIndex; }
+	void setRoomIndex(uint16_t index) { roomIndex = index; }
+	uint16_t getRoomIndex() { return roomIndex; }
 	void setPrepared(bool pre) { prepared = pre; }
 	bool getPrepared() { return prepared; }
 private:
@@ -55,7 +57,7 @@ private:
 
 	/*玩家的socket索引
 	*/
-	int socketIndex;
+	uint16_t socketIndex;
 
 	/*玩家走过的棋子记录
 	*/
@@ -79,7 +81,7 @@ private:
 
 	/*房间号
 	*/
-	int roomIndex;
+	uint16_t roomIndex;
 
 	/*是否准备
 	*/
