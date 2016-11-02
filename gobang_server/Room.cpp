@@ -127,7 +127,7 @@ void Room::exchangeColor() {
 重新开始  修改游戏状态为start，重新初始化棋盘，清空玩家棋子记录，交换玩家的颜色，设置黑棋方为先走。
 */
 void Room::restartInit() {
-	if (p1->getPrepared() && p2->getPrepared()) {
+	if (p1 != nullptr && p1->getPrepared() &&  p2 != nullptr && p2->getPrepared()) {
 		gameState = RUN;
 		initBoard();
 		exchangeColor();
@@ -154,7 +154,7 @@ void Room::frame(uint32_t dt, const SEND_FUN &send) {
 	break;
 	case END:
 		//restartInit();
-		if (p1->getPrepared() && p2->getPrepared()) {
+		if (p1 != nullptr && p1->getPrepared() && p2 != nullptr &&p2->getPrepared()) {
 			cout << "Both players are ready to start agagin." << endl;
 			exchangeColor();
 			//restartInit();
