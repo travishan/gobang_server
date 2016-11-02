@@ -18,7 +18,7 @@ void House::addPlayer(uint16_t socketIndex) {
 	players.push_back(p);
 	socketPlayerMap.insert(mapPair(socketIndex, playerIndex));
 
-	addInRoom(playerIndex);
+	searchRoom(playerIndex);
 
 	++playerIndex;
 
@@ -29,27 +29,60 @@ void House::addPlayer(uint16_t socketIndex) {
 */
 void House::disconnectPlayer(uint16_t socketIndex) {
 	mapIterator it = socketPlayerMap.find(socketIndex);
-	if (it != socketPlayerMap.end()) {
-		players.at(it->second)->disconnect();
+	auto pIndex = it->second;
+	Player *player = players.at(pIndex).get();
+	if (player != nullptr) {
+		uint16_t rIndex = player->getRoomIndex();
+		auto room = rooms[rIndex].get();
+		player->disconnect();
+		room->playerLeave(pIndex);
 	}
 }
 
-
-void House::addInRoom(uint16_t playerIndex) {
+/*
+加入房间
+*/
+void House::searchRoom(uint16_t playerIndex) {
 	uint16_t count = 0;
-	while (!rooms[roomIndex]->addPlayer(players[playerIndex], playerIndex)) {//room初始化失败
+	uint16_t roomHaveOnePlayerIndex = 65535;
+	//首先找寻有无只有一个玩家的房间
+	for (int i = 0; i < ROOM_NUM; ++i) {
+		if (rooms[i]->getPlayerNum() == 1) {
+			if (addInRoom(playerIndex, i)) {
+				return;
+			}
+		}
+	}
+	//若所有房间都为空，则按顺序将玩家加入房间
+	while (!addInRoom(playerIndex, roomIndex)) {//room初始化失败
 		roomIndex = (roomIndex + 1) % ROOM_NUM;
 		if (++count >= ROOM_NUM) {
 			cout << "No empty room in house!!" << endl;
 			return;
 		}
 	}
-	cout << "玩家" << playerIndex << "成功加入" << roomIndex << "房间" << endl;
-	//初始化成功，更新playerRoomMap
-	roomPlayerMap.insert(mapPair(roomIndex, playerIndex));
-	if (rooms[roomIndex]->getPlayerNum() >= 2) {
-		roomIndex = (roomIndex + 1) % ROOM_NUM;
+}
+
+bool House::addInRoom(uint16_t playerIndex, uint16_t rIndex) {
+	if (rooms[roomIndex]->addPlayer(players[playerIndex], playerIndex)) {
+		cout << "Player " << playerIndex << " is in room " << roomIndex << endl;
+		//初始化成功，更新playerRoomMap
+		roomPlayerMap.insert(mapPair(roomIndex, playerIndex));
+		if (rooms[roomIndex]->getPlayerNum() >= 2) {
+			roomIndex = (roomIndex + 1) % ROOM_NUM;
+		}
+		return true;
+	} else {
+		return false;
 	}
+	//while (!) {//room初始化失败
+	//	roomIndex = (roomIndex + 1) % ROOM_NUM;
+	//	if (++count >= ROOM_NUM) {
+	//		cout << "No empty room in house!!" << endl;
+	//		return;
+	//	}
+	//}
+
 }
 
 void House::handleRecieveData(uint16_t socketIndex, uint16_t flag, uint8_t *data, uint16_t length) {
@@ -81,7 +114,12 @@ void House::handleRecieveData(uint16_t socketIndex, uint16_t flag, uint8_t *data
 	case FLAG_READY:
 	{
 		player->setPrepared(true);
-		cout << "玩家" << playerIndex << "准备好了" << endl;
+		cout << "Player " << playerIndex << " is ready." << endl;
+	}break;
+	case FLAG_RESTART:
+	{
+		player->setPrepared(true);
+		cout << "Player" << playerIndex << " want to start again." << endl;
 	}break;
 	}
 }

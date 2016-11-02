@@ -24,7 +24,7 @@ using namespace std;
 #define GRID_NUM 15
 #define GRID_COUNT 15*15
 
-typedef struct
+typedef struct B_POINT_Struct
 {
 	uint16_t row;
 	uint16_t col;

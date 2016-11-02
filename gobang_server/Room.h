@@ -68,11 +68,21 @@ public:
 	void setWinner(uint16_t player) { winner = player; }
 	uint16_t getWinner() { return winner; }
 
+	/*
+	玩家离开
+	*/
+	void playerLeave(int index);
+
 private:
 	/*
 	初始化棋盘
 	*/
 	void initBoard();
+
+	/*
+	交换双方的颜色
+	*/
+	void exchangeColor();
 
 	/*
 	初始化棋局相关属性
@@ -108,7 +118,7 @@ private:
 	/*
 	检查有无掉线玩家
 	*/
-	void checkDisconnect();
+	bool checkDisconnect();
 
 	/*
 	获得GameMessage

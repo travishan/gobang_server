@@ -36,7 +36,8 @@ public:
 	/*
 	加入房间
 	*/
-	void addInRoom(uint16_t playerIndex);
+	void searchRoom(uint16_t playerIndex);
+	bool addInRoom(uint16_t playerIndex, uint16_t rIndex);
 
 	/*
 	处理消息

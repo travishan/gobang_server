@@ -16,6 +16,7 @@
 #define FLAG_ASK_REGRET 0x0012	//请求悔棋
 #define FLAG_RETURN_REGRET 0x0013  //另一方返回是否同意悔棋
 #define FLAG_READY 0x0014   //客户端准备好开始游戏
+#define FLAG_RESTART 0x0015 //客户端准备好再开一局
 
 ///*
 //服务端向客户端发送的消息头  uint16_t类型
@@ -48,7 +49,7 @@ typedef uint8_t* DataType;
 /*
 游戏信息消息包格式
 */
-typedef struct
+typedef struct Game_Message_Struct
 {
 	uint16_t gameState;//游戏状态
 	uint16_t curSide;//当前走棋方
@@ -62,7 +63,7 @@ typedef struct
 /*
 玩家信息消息包格式
 */
-typedef struct
+typedef struct Player_Message_Struct
 {
 	uint16_t name[16];
 	uint16_t color;//玩家颜色

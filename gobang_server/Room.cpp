@@ -2,10 +2,9 @@
 
 Room::Room() :
 	p1(nullptr), p2(nullptr), p1Index(-1), p2Index(-1), roomIndex(-1),
-	currentPlayer(N), lastTime(0), playerNum(0),
+	currentPlayer(p1Index), lastTime(0), playerNum(0),
 	gameState(WAIT), lastPlayerMessageTicks(0), lastGameMessageTicks(0),
-	winner(65535)
-{
+	winner(65535) {
 	initRoom();
 }
 
@@ -18,14 +17,15 @@ void Room::initP1(const shared_ptr<Player> &player, uint16_t index) {
 	p1 = player;
 	p1Index = index;
 	p1->setColor(B);
-	p1->setName("玩家1");
+	p1->setName("Tom");
 	p1->setRoomIndex(roomIndex);
+	currentPlayer = p1Index;
 }
 void Room::initP2(const shared_ptr<Player> &player, uint16_t index) {
 	p2 = player;
 	p2Index = index;
 	p2->setColor(W);
-	p2->setName("玩家2");
+	p2->setName("Jerry");
 	p2->setRoomIndex(roomIndex);
 }
 
@@ -33,14 +33,15 @@ void Room::initP2(const shared_ptr<Player> &player, uint16_t index) {
 初始化玩家1,2
 */
 bool Room::addPlayer(const shared_ptr<Player> &player, uint16_t index) {
-	if (playerNum == 0) {
+	if (p1 == nullptr) {
 		initP1(player, index);
-	} else if (playerNum == 1) {
+	} else if (p2 == nullptr) {
 		initP2(player, index);
 	} else {
 		return false;
 	}
-	++playerNum;
+	if(playerNum < 2)
+		++playerNum;
 	return true;
 }
 
@@ -49,12 +50,14 @@ bool Room::addPlayer(const shared_ptr<Player> &player, uint16_t index) {
 */
 void Room::initBoard() {
 	fillMatrix(chessBoard, N);
+	if(p1 != nullptr) p1->clear();
+	if (p2 != nullptr) p2->clear();
 }
 
 /*
 初始化棋局相关属性
 */
-void Room::initAttribute(CHESS_COLOR curSide,uint16_t time) {
+void Room::initAttribute(CHESS_COLOR curSide, uint16_t time) {
 	currentPlayer = curSide;
 	lastTime = time;
 	gameState = WAIT;
@@ -65,11 +68,25 @@ void Room::initAttribute(CHESS_COLOR curSide,uint16_t time) {
 }
 
 /*
+玩家离开
+*/
+void Room::playerLeave(int index){
+	if (playerNum > 0) {
+		--playerNum;
+		if (p1Index == index) {
+			p1.reset();
+		} else if (p2Index == index) {
+			p2.reset();
+		}
+	}
+}
+
+/*
 初始化房间
 */
 void Room::initRoom() {
 	initBoard();
-	initAttribute(-1,PLAYTIME);
+	initAttribute(-1, PLAYTIME);
 }
 
 /*
@@ -87,6 +104,34 @@ void Room::releaseRoom() {
 	initBoard();
 	initAttribute(-1, PLAYTIME);
 	releasePlayer();
+}
+
+/*
+交换双方的颜色
+*/
+void Room::exchangeColor() {
+	auto p1Color = p1->getColor();
+	auto p2Color = p2->getColor();
+	p1->setColor(p2Color);
+	p2->setColor(p1Color);
+	if (p1Color == W) {
+		currentPlayer = p1Index;
+	} else {
+		currentPlayer = p2Index;
+	}
+
+	winner = 65535;
+}
+
+/*
+重新开始  修改游戏状态为start，重新初始化棋盘，清空玩家棋子记录，交换玩家的颜色，设置黑棋方为先走。
+*/
+void Room::restartInit() {
+	if (p1->getPrepared() && p2->getPrepared()) {
+		gameState = RUN;
+		initBoard();
+		exchangeColor();
+	}
 }
 
 //执行游戏逻辑
@@ -108,44 +153,30 @@ void Room::frame(uint32_t dt, const SEND_FUN &send) {
 	}
 	break;
 	case END:
-		restartInit();
+		//restartInit();
+		if (p1->getPrepared() && p2->getPrepared()) {
+			cout << "Both players are ready to start agagin." << endl;
+			exchangeColor();
+			//restartInit();
+			gameState = START;
+		}
+			
 		break;
 	}
 	//发送消息
 	sendMessage(send);
-	
+
 }
 
 /*
 检查有无掉线玩家
 */
-void Room::checkDisconnect() {
+bool Room::checkDisconnect() {
 	if ((p1 != nullptr && p1->isDisconnected()) || (p2 != nullptr && p2->isDisconnected())) {
-		gameState = END;
+		gameState = WAIT;
+		return false;
 	}
-}
-
-/*
-重新开始  修改游戏状态为start，重新初始化棋盘，清空玩家棋子记录，交换玩家的颜色，设置黑棋方为先走。
-*/
-void Room::restartInit() {
-	if (p1->getPrepared() && p2->getPrepared()) {
-		gameState = RUN;
-		initBoard();
-		p1->clear();
-		p2->clear();
-		winner = 65535;
-		auto p1Color = p1->getColor();
-		auto p2Color = p2->getColor();
-		p1->setColor(p2Color);
-		p2->setColor(p1Color);
-		if (p1Color == W) {
-			currentPlayer = p1Index;
-		} else {
-			currentPlayer = p2Index;
-		}
-		
-	}
+	return true;
 }
 
 /*
@@ -190,7 +221,7 @@ Player_Message Room::getPlayerMessage(uint16_t pi) {
 void Room::waitState() {
 	if (playerNum >= 2) {
 		gameState = START;
-		cout << "当前人数2人，进入开始状态" << endl;
+		cout << "There's two peoples in room " << roomIndex << " and the game will begin." << endl;
 		return;
 	}
 }
@@ -199,12 +230,15 @@ void Room::waitState() {
 处理start 的逻辑
 */
 void Room::startState() {
+	if (!checkDisconnect())
+		return;
 	if (p1->getPrepared() && p2->getPrepared()) {//游戏开始，初始化游戏相关属性
-		cout << "双方已经准备完毕，游戏即将开始" << endl;
+		cout << "Both players are prepared, game is going to start." << endl;
+		initBoard();
 		p1->setPrepared(false);
 		p2->setPrepared(false);
 		gameState = RUN;
-		currentPlayer = p1Index;
+		//currentPlayer = p1Index;
 		lastTime = PLAYTIME;
 	}
 }
@@ -223,7 +257,6 @@ void Room::runState() {
 		winner = p2Index;
 	}
 	gameState = END;
-
 }
 
 /*
